@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ThermoVerse</title>
+    <meta
+      name="description"
+      content="ThermoVerse project website for thermal Gaussian works and RGB-thermal datasets."
+    >
+    <link rel="stylesheet" href="assets/site.css">
+  </head>
+  <body>
+    <aside class="sidebar" aria-label="Site navigation">
+      <a class="brand" href="#top" data-nav-link>
+        <span class="brand-mark">TV</span>
+        <span>
+          <strong>ThermoVerse</strong>
+          <small>RGB-Thermal Research</small>
+        </span>
+      </a>
+
+      <nav class="site-nav">
+        <div class="nav-group">
+          <a class="nav-heading" href="#published-works" data-nav-link>Published works</a>
+          <a href="#thermalgaussian" data-nav-link>ThermalGaussian</a>
+          <a href="#thermalgaussian-plus-plus" data-nav-link>ThermalGaussian++</a>
+        </div>
+        <div class="nav-group">
+          <a class="nav-heading" href="#submitted-works" data-nav-link>Submitted works</a>
+          <a href="#thermalgaussian-x" data-nav-link>ThermalGaussian-X</a>
+          <a href="#dynamic-thermal-gaussians" data-nav-link>Dynamic Thermal Gaussians</a>
+        </div>
+        <div class="nav-group">
+          <a class="nav-heading" href="#datasets" data-nav-link>Datasets</a>
+          <a href="#dataset-rgbt-scenes" data-nav-link>RGBT-Scenes</a>
+          <a href="#dataset-rgbt-scenes-plus-plus" data-nav-link>RGBT-Scenes++</a>
+          <a href="#dataset-rgbt-scenes-extend" data-nav-link>RGBT-Scenes-extend</a>
+          <a href="#dataset-dynamic-rgbt-scenes" data-nav-link>DynamicRGBT-Scenes</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main id="top" class="page-shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-content">
+          <p class="eyebrow">Thermal Gaussian Splatting and RGB-Thermal Datasets</p>
+          <h1 id="page-title">ThermoVerse</h1>
+          <p>
+            A compact project hub for published work, submitted explorations, and
+            RGB-thermal scene datasets.
+          </p>
+        </div>
+      </section>
+
+      <section id="published-works" class="content-section" aria-labelledby="published-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Research portfolio</p>
+          <h2 id="published-heading">Published works</h2>
+          <p>Peer-reviewed projects collected from the local project assets.</p>
+        </div>
+        <div id="published-grid" class="work-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="submitted-works" class="content-section" aria-labelledby="submitted-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Under review</p>
+          <h2 id="submitted-heading">Submitted works</h2>
+          <p>Ongoing submissions shown with placeholder descriptions for later editing.</p>
+        </div>
+        <div id="submitted-grid" class="work-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="datasets" class="content-section" aria-labelledby="datasets-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Scene collections</p>
+          <h2 id="datasets-heading">Datasets</h2>
+          <p>All available scene examples are rendered from the existing dataset folders.</p>
+        </div>
+        <div id="dataset-list" class="dataset-list" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script type="module" src="assets/site.js"></script>
+  </body>
+</html>
