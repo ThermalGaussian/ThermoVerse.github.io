@@ -23,20 +23,19 @@ html {
 
 body {
   margin: 0;
+  overflow-x: hidden;
   background: var(--bg);
   color: var(--ink);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   line-height: 1.6;
-  overflow-x: hidden;
 }
 
 img {
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  height: auto;
 }
 
 a {
@@ -50,10 +49,10 @@ a {
   z-index: 20;
   width: var(--sidebar-width);
   padding: 28px 22px;
+  overflow-y: auto;
   border-right: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(14px);
-  overflow-y: auto;
 }
 
 .brand {
@@ -76,19 +75,10 @@ a {
   font-weight: 800;
 }
 
-.brand strong,
-.brand small {
-  display: block;
-}
-
 .brand strong {
+  display: block;
   font-size: 1.04rem;
   line-height: 1.25;
-}
-
-.brand small {
-  color: var(--muted);
-  font-size: 0.78rem;
 }
 
 .site-nav,
@@ -131,39 +121,28 @@ a {
 }
 
 .page-shell {
-  margin-left: var(--sidebar-width);
   min-height: 100vh;
+  margin-left: var(--sidebar-width);
 }
 
 .hero {
   min-height: 62vh;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   padding: 96px clamp(28px, 7vw, 88px) 72px;
   color: #ffffff;
-  background:
-    linear-gradient(90deg, rgba(20, 27, 31, 0.9), rgba(20, 27, 31, 0.55)),
-    url("../projects/thermalgaussian/comparison1.png") center / cover no-repeat;
+  background-color: #141b1f;
+  background-image:
+    linear-gradient(90deg, rgba(20, 27, 31, 0.88), rgba(20, 27, 31, 0.38)),
+    url("../projects/thermalgaussian/comparison1.png");
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 100%, contain;
 }
 
 .hero-content {
   width: min(100%, 760px);
-  max-width: 760px;
   min-width: 0;
-}
-
-.eyebrow {
-  margin: 0 0 10px;
-  color: var(--warm);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  overflow-wrap: anywhere;
-}
-
-.hero .eyebrow {
-  color: #ffd08a;
 }
 
 .hero h1 {
@@ -173,10 +152,10 @@ a {
   letter-spacing: 0;
 }
 
-.hero p:last-child {
-  max-width: min(100%, 620px);
+.hero p {
+  max-width: min(100%, 640px);
   margin: 22px 0 0;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 1.14rem;
 }
 
@@ -189,7 +168,6 @@ a {
 }
 
 .section-heading {
-  max-width: 760px;
   margin-bottom: 28px;
 }
 
@@ -200,52 +178,44 @@ a {
   letter-spacing: 0;
 }
 
-.section-heading p:last-child {
-  margin: 10px 0 0;
-  color: var(--muted);
-  font-size: 1rem;
-}
-
 .work-grid,
 .dataset-list {
   display: grid;
-  gap: 22px;
+  gap: 24px;
+  min-width: 0;
 }
 
 .project-card,
-.dataset-block,
-.scene-card {
+.dataset-block {
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
   box-shadow: var(--shadow);
 }
 
-.project-card,
+.project-card {
+  padding: clamp(20px, 4vw, 36px);
+}
+
 .dataset-block {
   padding: clamp(18px, 3vw, 28px);
+  scroll-margin-top: 24px;
 }
 
 .project-header,
 .dataset-header {
   display: grid;
   gap: 10px;
-  max-width: 860px;
-  margin-bottom: 20px;
-}
-
-.project-meta,
-.dataset-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
+  max-width: 920px;
+  margin-bottom: 28px;
 }
 
 .pill {
+  width: fit-content;
+  min-height: 28px;
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
   border-radius: 999px;
   background: var(--surface-soft);
   color: var(--accent-strong);
@@ -254,40 +224,44 @@ a {
   padding: 4px 10px;
 }
 
-.count {
-  color: var(--muted);
-  font-size: 0.86rem;
-}
-
 .project-card h3,
-.dataset-block h3,
-.scene-card h4 {
+.dataset-block h3 {
   margin: 0;
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
   line-height: 1.2;
   letter-spacing: 0;
 }
 
-.project-card h3,
-.dataset-block h3 {
-  font-size: clamp(1.45rem, 3vw, 2.1rem);
-}
-
-.project-card p,
-.dataset-block p,
-.scene-card p {
+.project-header p,
+.dataset-header p,
+.work-section p {
   margin: 0;
   color: var(--muted);
 }
 
-.project-gallery {
+.project-body {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 34px;
+}
+
+.work-section {
+  display: grid;
   gap: 14px;
 }
 
-.project-figure,
-.modality {
-  min-width: 0;
+.work-section h4 {
+  margin: 0;
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.work-figure-list {
+  display: grid;
+  gap: 18px;
+}
+
+.work-figure {
   margin: 0;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -295,66 +269,86 @@ a {
   background: #f3f5f2;
 }
 
-.project-figure:first-child {
-  grid-column: 1 / -1;
-}
-
-.project-figure .image-frame {
-  aspect-ratio: 16 / 8;
-}
-
-.project-figure:not(:first-child) .image-frame {
-  aspect-ratio: 16 / 10;
+.work-figure img {
+  width: 100%;
+  height: auto;
 }
 
 figcaption {
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 0.82rem;
-  padding: 8px 10px;
-}
-
-.dataset-block {
-  scroll-margin-top: 24px;
-}
-
-.scene-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 14px;
-}
-
-.scene-card {
-  padding: 12px;
-  box-shadow: none;
-}
-
-.scene-card h4 {
-  min-height: 2.4em;
-  margin-bottom: 10px;
-  font-size: 0.98rem;
-}
-
-.modalities {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.modalities.two-column {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.modality .image-frame {
-  aspect-ratio: 4 / 3;
-}
-
-.modality figcaption {
-  background: #ffffff;
-  color: var(--ink);
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.86rem;
+  padding: 9px 12px;
   text-align: center;
+}
+
+.dataset-table-wrap {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.dataset-table {
+  width: 100%;
+  min-width: 940px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.dataset-table caption {
+  caption-side: top;
+  padding: 12px 14px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.dataset-table th,
+.dataset-table td {
+  border-top: 1px solid var(--line);
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.dataset-table th {
+  background: var(--surface-soft);
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.dataset-table td {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.dataset-table td:first-child,
+.dataset-table th:first-child {
+  width: 12%;
+}
+
+.dataset-table td:first-child {
+  color: var(--ink);
+}
+
+.dataset-table .temperature {
+  width: 14%;
+}
+
+.dataset-thumb {
+  width: 160px;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #f3f5f2;
 }
 
 @media (max-width: 980px) {
@@ -396,10 +390,6 @@ figcaption {
     gap: 5px;
   }
 
-  .site-nav a {
-    overflow-wrap: anywhere;
-  }
-
   .site-nav a:hover {
     transform: none;
   }
@@ -426,10 +416,10 @@ figcaption {
   }
 
   .site-nav a {
-    font-size: 0.76rem;
     overflow-wrap: normal;
-    padding: 5px 0;
     word-break: normal;
+    font-size: 0.76rem;
+    padding: 5px 0;
   }
 
   .site-nav .nav-heading {
@@ -440,29 +430,16 @@ figcaption {
     padding: 48px 16px;
   }
 
-  .project-gallery {
-    grid-template-columns: 1fr;
+  .project-card,
+  .dataset-block {
+    padding: 18px;
   }
 
-  .project-figure:first-child {
-    grid-column: auto;
+  .project-body {
+    gap: 28px;
   }
 
-  .project-figure .image-frame,
-  .project-figure:not(:first-child) .image-frame {
-    aspect-ratio: 4 / 3;
-  }
-
-  .scene-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .scene-card h4 {
-    min-height: 0;
-  }
-
-  .modalities,
-  .modalities.two-column {
-    grid-template-columns: 1fr;
+  .dataset-table {
+    min-width: 760px;
   }
 }

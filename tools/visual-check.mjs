@@ -167,6 +167,13 @@ async function inspectViewport(client, pageUrl, viewport, screenshotName) {
   const loaded = client.once("Page.loadEventFired");
   await client.send("Page.navigate", { url: pageUrl });
   await loaded;
+  await client.send("Runtime.evaluate", {
+    awaitPromise: true,
+    expression: `Promise.all([...document.images].map((image) => {
+      image.loading = "eager";
+      return image.decode().catch(() => null);
+    }))`,
+  });
 
   let metrics;
   for (let index = 0; index < 20; index += 1) {
@@ -178,19 +185,37 @@ async function inspectViewport(client, pageUrl, viewport, screenshotName) {
           title: document.title,
           projects: document.querySelectorAll(".project-card").length,
           datasets: document.querySelectorAll(".dataset-block").length,
-          scenes: document.querySelectorAll(".scene-card").length,
+          scenes: document.querySelectorAll(".dataset-row").length,
+          tables: document.querySelectorAll(".dataset-table").length,
+          workFigures: document.querySelectorAll(".work-figure").length,
           images: document.querySelectorAll("main img").length,
+          projectImagesLoaded: [...document.querySelectorAll(".work-figure img")].every((image) => image.complete && image.naturalWidth > 0),
+          croppedProjectImages: [...document.querySelectorAll(".work-figure img")].filter((image) => {
+            if (!image.naturalWidth || !image.naturalHeight) {
+              return true;
+            }
+            const rendered = image.getBoundingClientRect();
+            const naturalRatio = image.naturalWidth / image.naturalHeight;
+            const renderedRatio = rendered.width / rendered.height;
+            return Math.abs(naturalRatio - renderedRatio) > 0.03;
+          }).length,
           clientWidth: document.documentElement.clientWidth,
           scrollWidth: document.documentElement.scrollWidth,
           bodyScrollWidth: document.body.scrollWidth,
           heroRight: hero ? Math.round(hero.right) : null,
           viewportWidth: window.innerWidth,
-          overflowX: document.documentElement.scrollWidth > window.innerWidth + 1,
+          overflowX: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
         };
       })()`,
     });
     metrics = result.result.value;
-    if (metrics.projects === 4 && metrics.datasets === 4 && metrics.scenes === 36) {
+    if (
+      metrics.projects === 4 &&
+      metrics.datasets === 4 &&
+      metrics.scenes === 36 &&
+      metrics.tables === 4 &&
+      metrics.projectImagesLoaded
+    ) {
       break;
     }
     await new Promise((resolve) => setTimeout(resolve, 150));
@@ -253,6 +278,12 @@ try {
   assert(mobileMetrics.datasets === 4, "Mobile render must include four datasets");
   assert(desktopMetrics.scenes === 36, "Desktop render must include all scenes");
   assert(mobileMetrics.scenes === 36, "Mobile render must include all scenes");
+  assert(desktopMetrics.tables === 4, "Desktop render must include four dataset tables");
+  assert(mobileMetrics.tables === 4, "Mobile render must include four dataset tables");
+  assert(desktopMetrics.workFigures === 12, "Desktop render must include all work figures");
+  assert(mobileMetrics.workFigures === 12, "Mobile render must include all work figures");
+  assert(desktopMetrics.croppedProjectImages === 0, "Desktop project images must preserve natural aspect ratios");
+  assert(mobileMetrics.croppedProjectImages === 0, "Mobile project images must preserve natural aspect ratios");
   assert(desktopMetrics.images === 108, "Desktop render must include all main images");
   assert(mobileMetrics.images === 108, "Mobile render must include all main images");
   assert(!desktopMetrics.overflowX, "Desktop viewport has horizontal overflow");

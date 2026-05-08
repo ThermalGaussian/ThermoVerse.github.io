@@ -36,6 +36,11 @@ assert(html.includes('src="assets/site.js"'), "index.html must load assets/site.
 assert(html.includes('id="published-works"'), "Missing Published works section");
 assert(html.includes('id="submitted-works"'), "Missing Submitted works section");
 assert(html.includes('id="datasets"'), "Missing Datasets section");
+assert(!html.includes("RGB-Thermal Research"), "Sidebar brand subtitle should be removed");
+assert(!html.includes("Research portfolio"), "Published works should not include an eyebrow label");
+assert(!html.includes("Peer-reviewed projects"), "Published works should not include helper copy");
+assert(!html.includes("Under review"), "Submitted works should not include an eyebrow label");
+assert(!html.includes("Scene collections"), "Datasets should not include an eyebrow label");
 
 const expectedAnchors = [
   "#thermalgaussian",
@@ -54,7 +59,11 @@ for (const anchor of expectedAnchors) {
 
 assert(css.includes("position: sticky") || css.includes("position: fixed"), "Sidebar must stay visible on desktop");
 assert(css.includes("@media"), "Responsive CSS media queries are required");
+assert(!css.includes("object-fit: cover"), "Images must not be cropped with object-fit: cover");
+assert(!css.includes("/ cover no-repeat"), "Hero background must not use cover cropping");
 assert(/loading\s*=\s*["']lazy["']/.test(js), "Images must be rendered with lazy loading");
+assert(!js.includes("visual assets"), "Project headers must not show visual asset counts");
+assert(js.includes("Published at ICLR 2025"), "ThermalGaussian venue label is required");
 
 const moduleUrl = `${pathToFileURL(path.join(root, "assets/site.js")).href}?t=${Date.now()}`;
 const { works, datasets } = await import(moduleUrl);
@@ -75,12 +84,24 @@ for (const [title, status] of expectedWorks) {
   const work = works.find((item) => item.title === title);
   assert(work, `Missing work: ${title}`);
   assert(work.status === status, `${title} must be marked ${status}`);
-  assert(Array.isArray(work.images) && work.images.length > 0, `${title} must include images`);
-  for (const image of work.images) {
-    await assertExists(image.src);
-    assert(image.caption, `${title} image captions are required`);
+  assert(Array.isArray(work.sections) && work.sections.length > 0, `${title} must include project sections`);
+  for (const section of work.sections) {
+    assert(section.heading, `${title} section headings are required`);
+    assert(section.body, `${title} section body copy is required`);
+    assert(Array.isArray(section.figures) && section.figures.length > 0, `${title} sections must include figures`);
+    for (const figure of section.figures) {
+      await assertExists(figure.src);
+      assert(figure.alt, `${title} figure alt text is required`);
+      assert(figure.caption, `${title} figure captions are required`);
+    }
   }
 }
+
+const thermalGaussian = works.find((item) => item.title === "ThermalGaussian");
+assert(
+  thermalGaussian.venue === "Published at ICLR 2025",
+  "ThermalGaussian must show Published at ICLR 2025",
+);
 
 const expectedDatasets = new Set([
   "RGBT-Scenes",
@@ -92,6 +113,7 @@ const expectedDatasets = new Set([
 for (const dataset of datasets) {
   assert(expectedDatasets.has(dataset.name), `Unexpected dataset: ${dataset.name}`);
   assert(Array.isArray(dataset.scenes) && dataset.scenes.length > 0, `${dataset.name} must include scenes`);
+  assert(dataset.display === "table", `${dataset.name} must render as a dataset table`);
 
   for (const scene of dataset.scenes) {
     assert(scene.name, `${dataset.name} has a scene without a name`);
@@ -108,5 +130,12 @@ for (const dataset of datasets) {
     }
   }
 }
+
+const rgbtScenes = datasets.find((dataset) => dataset.name === "RGBT-Scenes");
+assert(rgbtScenes.caption === "Each scene in the RGBT-Scenes dataset is displayed", "RGBT-Scenes table caption is required");
+assert(
+  rgbtScenes.scenes.every((item) => item.views && item.temperature),
+  "RGBT-Scenes scenes must include Views and Temp. Range metadata",
+);
 
 console.log(`Validated ${works.length} works and ${datasets.length} datasets.`);

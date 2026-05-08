@@ -3,84 +3,112 @@ export const works = [
     id: "thermalgaussian",
     title: "ThermalGaussian",
     status: "Published",
+    venue: "Published at ICLR 2025",
     description:
       "Placeholder description: a thermal-aware 3D Gaussian Splatting project for paired RGB and thermal scene reconstruction.",
-    images: [
-      {
-        src: "projects/thermalgaussian/pipeline.png",
-        caption: "Pipeline overview",
-      },
-      {
-        src: "projects/thermalgaussian/comparison1.png",
-        caption: "Qualitative comparison I",
-      },
-      {
-        src: "projects/thermalgaussian/comparison2.png",
-        caption: "Qualitative comparison II",
-      },
-      {
-        src: "projects/thermalgaussian/Point_all.png",
-        caption: "Point visualization",
-      },
-      {
-        src: "projects/thermalgaussian/dynamic_loss.png",
-        caption: "Dynamic loss illustration",
-      },
-      {
-        src: "projects/thermalgaussian/paper.png",
-        caption: "Paper thumbnail",
-      },
+    sections: [
+      workSection(
+        "Pipeline",
+        "This figure summarizes the main pipeline and the cross-modal modeling process used in ThermalGaussian.",
+        [
+          figure("projects/thermalgaussian/pipeline.png", "ThermalGaussian pipeline", "Pipeline overview"),
+        ],
+      ),
+      workSection(
+        "Comparisons",
+        "We present qualitative thermal image comparisons between our method, previous approaches, and the corresponding ground truth images from test views. We also show the training results of MSX images, which are easier to apply.",
+        [
+          figure("projects/thermalgaussian/comparison1.png", "Thermal comparison", "Qualitative thermal and MSX comparison"),
+          figure("projects/thermalgaussian/comparison2.png", "RGB comparison", "Qualitative RGB comparison"),
+        ],
+      ),
+      workSection(
+        "Multimodal Regularization",
+        "To verify the effectiveness of the multimodal regularization term, we compare adaptive regularization with manual adjustment of the thermal constraint coefficient and visualize the Gaussian distributions.",
+        [
+          figure("projects/thermalgaussian/dynamic_loss.png", "Multimodal regularization comparison", "(a) MR (gamma) vs. fixed coefficient"),
+          figure("projects/thermalgaussian/Point_all.png", "Gaussian distributions", "(b) Gaussian distributions. Left: 3DGS; Right: Ours (MSMG) + MR"),
+        ],
+      ),
+      workSection(
+        "Paper Thumbnail",
+        "This thumbnail is kept as a compact visual reference for the published work.",
+        [
+          figure("projects/thermalgaussian/paper.png", "ThermalGaussian paper thumbnail", "Paper thumbnail"),
+        ],
+      ),
     ],
   },
   {
     id: "thermalgaussian-plus-plus",
     title: "ThermalGaussian++",
     status: "Published",
+    venue: "Published work",
     description:
       "Placeholder description: an extended RGB-thermal Gaussian representation with qualitative results for aligned and non-aligned settings.",
-    images: [
-      {
-        src: "projects/thermalgaussian++/comparsion.png",
-        caption: "Non-aligned reconstruction comparison",
-      },
-      {
-        src: "projects/thermalgaussian++/comparsion_x8.png",
-        caption: "Non-aligned super-resolution comparison",
-      },
-      {
-        src: "projects/thermalgaussian++/comparsion_x8_1.png",
-        caption: "Aligned super-resolution comparison",
-      },
+    sections: [
+      workSection(
+        "Non-aligned Reconstruction",
+        "We compare qualitative reconstruction results on non-aligned RGB-thermal data.",
+        [
+          figure("projects/thermalgaussian++/comparsion.png", "ThermalGaussian++ non-aligned reconstruction comparison", "Non-aligned reconstruction comparison"),
+        ],
+      ),
+      workSection(
+        "Non-aligned Super-resolution",
+        "We show qualitative super-resolution results for non-aligned data.",
+        [
+          figure("projects/thermalgaussian++/comparsion_x8.png", "ThermalGaussian++ non-aligned super-resolution comparison", "Non-aligned super-resolution comparison"),
+        ],
+      ),
+      workSection(
+        "Aligned Super-resolution",
+        "We also include qualitative super-resolution results for aligned data.",
+        [
+          figure("projects/thermalgaussian++/comparsion_x8_1.png", "ThermalGaussian++ aligned super-resolution comparison", "Aligned super-resolution comparison"),
+        ],
+      ),
     ],
   },
   {
     id: "thermalgaussian-x",
     title: "ThermalGaussian-X",
     status: "Submitted",
+    venue: "Submitted work",
     description:
       "Placeholder description: a submitted study exploring RGB-thermal alignment and reconstruction under cross-modal observations.",
-    images: [
-      {
-        src: "projects/thermalgaussian-X/comparsion.png",
-        caption: "Reconstruction comparison",
-      },
-      {
-        src: "projects/thermalgaussian-X/alignment.png",
-        caption: "Alignment comparison",
-      },
+    sections: [
+      workSection(
+        "Reconstruction Comparison",
+        "We present qualitative reconstruction comparisons for the submitted ThermalGaussian-X project.",
+        [
+          figure("projects/thermalgaussian-X/comparsion.png", "ThermalGaussian-X reconstruction comparison", "Reconstruction comparison"),
+        ],
+      ),
+      workSection(
+        "Alignment Comparison",
+        "We visualize the alignment behavior between RGB and thermal observations.",
+        [
+          figure("projects/thermalgaussian-X/alignment.png", "ThermalGaussian-X alignment comparison", "Alignment comparison"),
+        ],
+      ),
     ],
   },
   {
     id: "dynamic-thermal-gaussians",
     title: "Dynamic Thermal Gaussians",
     status: "Submitted",
+    venue: "Submitted work",
     description:
       "Placeholder description: a submitted dynamic-scene extension for modeling temporal RGB-thermal observations with Gaussian representations.",
-    images: [
-      {
-        src: "projects/dynamicTG/pipeline_new.png",
-        caption: "Dynamic pipeline overview",
-      },
+    sections: [
+      workSection(
+        "Dynamic Pipeline",
+        "This figure illustrates the dynamic RGB-thermal Gaussian modeling pipeline.",
+        [
+          figure("projects/dynamicTG/pipeline_new.png", "Dynamic Thermal Gaussians pipeline", "Dynamic pipeline overview"),
+        ],
+      ),
     ],
   },
 ];
@@ -89,112 +117,76 @@ export const datasets = [
   {
     id: "dataset-rgbt-scenes",
     name: "RGBT-Scenes",
+    display: "table",
     summary:
-      "A static RGB-thermal scene collection with RGB, thermal, and MSX examples.",
+      "The following 10 scenes were selected for both qualitative and quantitative analysis in our paper.",
+    caption: "Each scene in the RGBT-Scenes dataset is displayed",
     scenes: [
-      scene("building", {
-        RGB: "datasets/RGBT-Scenes/building_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes/building_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes/building_msx.jpg",
-      }),
-      scene("DailyStuff", {
+      scene("Dimsum", rgbtPath("dimsum"), { views: "134(train) 20(test)", temperature: "23.1\u00b0C - 60.0\u00b0C" }),
+      scene("Daily Stuff", {
         RGB: "datasets/RGBT-Scenes/DailyStuff_rgb.jpg",
         Thermal: "datasets/RGBT-Scenes/DailyStuff_thermal.jpg",
         MSX: "datasets/RGBT-Scenes/DailyStuff_msx.jpg",
-      }),
-      scene("dimsum", {
-        RGB: "datasets/RGBT-Scenes/dimsum_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes/dimsum_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes/dimsum_msx.jpg",
-      }),
-      scene("electromobile", {
-        RGB: "datasets/RGBT-Scenes/electromobile_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes/electromobile_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes/electromobile_msx.jpg",
-      }),
-      scene("iron_ingot", {
-        RGB: "datasets/RGBT-Scenes/iron_ingot_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes/iron_ingot_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes/iron_ingot_msx.jpg",
-      }),
-      scene("landscape", {
-        RGB: "datasets/RGBT-Scenes/landscape_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes/landscape_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes/landscape_msx.jpg",
-      }),
+      }, { views: "68(train) 10(test)", temperature: "17.5\u00b0C - 56.3\u00b0C" }),
+      scene("Electric Bicycle", rgbtPath("electromobile"), { views: "42(train) 6(test)", temperature: "14.5\u00b0C - 18.5\u00b0C" }),
+      scene("Roadblock", rgbtPath("roadblock"), { views: "62(train) 9(test)", temperature: "22.0\u00b0C - 27.0\u00b0C" }),
+      scene("Truck", rgbtPath("residue_truck"), { views: "64(train) 9(test)", temperature: "30.6\u00b0C - 249.0\u00b0C" }),
+      scene("Rotary Kiln", {
+        RGB: "datasets/RGBT-Scenes/Rotary_Kiln_rgb.jpg",
+        Thermal: "datasets/RGBT-Scenes/Rotary_Kiln_thermal.jpg",
+        MSX: "datasets/RGBT-Scenes/Rotary_Kiln_msx.jpg",
+      }, { views: "92(train) 14(test)", temperature: "5.0\u00b0C - 60.4\u00b0C" }),
+      scene("Building", rgbtPath("building"), { views: "238(train) 35(test)", temperature: "15.0\u00b0C - 24.0\u00b0C" }),
+      scene("Iron ingot", rgbtPath("iron_ingot"), { views: "53(train) 8(test)", temperature: "38.0\u00b0C - 350.0\u00b0C" }),
       scene("Parterre", {
         RGB: "datasets/RGBT-Scenes/Parterre_rgb.jpg",
         Thermal: "datasets/RGBT-Scenes/Parterre_thermal.jpg",
         MSX: "datasets/RGBT-Scenes/Parterre_msx.jpg",
-      }),
-      scene("residue_truck", {
-        RGB: "datasets/RGBT-Scenes/residue_truck_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes/residue_truck_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes/residue_truck_msx.jpg",
-      }),
-      scene("roadblock", {
-        RGB: "datasets/RGBT-Scenes/roadblock_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes/roadblock_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes/roadblock_msx.jpg",
-      }),
-      scene("Rotary_Kiln", {
-        RGB: "datasets/RGBT-Scenes/Rotary_Kiln_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes/Rotary_Kiln_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes/Rotary_Kiln_msx.jpg",
-      }),
+      }, { views: "57(train) 9(test)", temperature: "19.5\u00b0C - 27.5\u00b0C" }),
+      scene("Landscape", rgbtPath("landscape"), { views: "90(train) 13(test)", temperature: "16.0\u00b0C - 23.0\u00b0C" }),
     ],
   },
   {
     id: "dataset-rgbt-scenes-plus-plus",
     name: "RGBT-Scenes++",
+    display: "table",
     summary:
-      "An expanded static RGB-thermal scene collection with paired RGB, thermal, and MSX examples.",
+      "Additional RGB-thermal scenes are displayed with RGB, thermal, and MSX examples.",
+    caption: "Each scene in the RGBT-Scenes++ dataset is displayed",
     scenes: [
-      folderScene("applicances", "datasets/RGBT-Scenes++/applicances"),
-      folderScene("chair", "datasets/RGBT-Scenes++/chair"),
-      folderScene("glass", "datasets/RGBT-Scenes++/glass"),
-      folderScene("human", "datasets/RGBT-Scenes++/human"),
-      folderScene("laptop", "datasets/RGBT-Scenes++/laptop"),
-      folderScene("plastic", "datasets/RGBT-Scenes++/plastic"),
-      folderScene("pv_panel1", "datasets/RGBT-Scenes++/pv_panel1"),
-      folderScene("pv_panel2", "datasets/RGBT-Scenes++/pv_panel2"),
-      folderScene("refreshments", "datasets/RGBT-Scenes++/refreshments"),
-      folderScene("switch", "datasets/RGBT-Scenes++/switch"),
+      folderScene("Applicances", "datasets/RGBT-Scenes++/applicances"),
+      folderScene("Chair", "datasets/RGBT-Scenes++/chair"),
+      folderScene("Glass", "datasets/RGBT-Scenes++/glass"),
+      folderScene("Human", "datasets/RGBT-Scenes++/human"),
+      folderScene("Laptop", "datasets/RGBT-Scenes++/laptop"),
+      folderScene("Plastic", "datasets/RGBT-Scenes++/plastic"),
+      folderScene("PV Panel 1", "datasets/RGBT-Scenes++/pv_panel1"),
+      folderScene("PV Panel 2", "datasets/RGBT-Scenes++/pv_panel2"),
+      folderScene("Refreshments", "datasets/RGBT-Scenes++/refreshments"),
+      folderScene("Switch", "datasets/RGBT-Scenes++/switch"),
     ],
   },
   {
     id: "dataset-rgbt-scenes-extend",
     name: "RGBT-Scenes-extend",
+    display: "table",
     summary:
-      "Additional static RGB-thermal examples with RGB, thermal, and MSX modalities.",
+      "Extended RGB-thermal scenes are displayed with RGB, thermal, and MSX examples.",
+    caption: "Each scene in the RGBT-Scenes-extend dataset is displayed",
     scenes: [
-      scene("Cup", {
-        RGB: "datasets/RGBT-Scenes-extend/Cup_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes-extend/Cup_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes-extend/Cup_msx.jpg",
-      }),
-      scene("Dark", {
-        RGB: "datasets/RGBT-Scenes-extend/Dark_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes-extend/Dark_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes-extend/Dark_msx.jpg",
-      }),
-      scene("Plant", {
-        RGB: "datasets/RGBT-Scenes-extend/Plant_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes-extend/Plant_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes-extend/Plant_msx.jpg",
-      }),
-      scene("Tower", {
-        RGB: "datasets/RGBT-Scenes-extend/Tower_rgb.jpg",
-        Thermal: "datasets/RGBT-Scenes-extend/Tower_thermal.jpg",
-        MSX: "datasets/RGBT-Scenes-extend/Tower_msx.jpg",
-      }),
+      prefixedScene("Cup", "datasets/RGBT-Scenes-extend/Cup"),
+      prefixedScene("Dark", "datasets/RGBT-Scenes-extend/Dark"),
+      prefixedScene("Plant", "datasets/RGBT-Scenes-extend/Plant"),
+      prefixedScene("Tower", "datasets/RGBT-Scenes-extend/Tower"),
     ],
   },
   {
     id: "dataset-dynamic-rgbt-scenes",
     name: "DynamicRGBT-Scenes",
+    display: "table",
     summary:
-      "A dynamic RGB-thermal scene collection with RGB and thermal frame examples.",
+      "Dynamic RGB-thermal scenes are displayed with RGB and thermal frame examples.",
+    caption: "Each scene in the DynamicRGBT-Scenes dataset is displayed",
     scenes: [
       dynamicScene("Bacon"),
       dynamicScene("Candles"),
@@ -212,8 +204,29 @@ export const datasets = [
   },
 ];
 
-function scene(name, images) {
-  return { name, images };
+function workSection(heading, body, figures) {
+  return { heading, body, figures };
+}
+
+function figure(src, alt, caption) {
+  return { src, alt, caption };
+}
+
+function scene(name, images, metadata = {}) {
+  return {
+    name,
+    images,
+    views: metadata.views ?? "-",
+    temperature: metadata.temperature ?? "-",
+  };
+}
+
+function rgbtPath(name) {
+  return {
+    RGB: `datasets/RGBT-Scenes/${name}_rgb.jpg`,
+    Thermal: `datasets/RGBT-Scenes/${name}_thermal.jpg`,
+    MSX: `datasets/RGBT-Scenes/${name}_msx.jpg`,
+  };
 }
 
 function folderScene(name, basePath) {
@@ -221,6 +234,14 @@ function folderScene(name, basePath) {
     RGB: `${basePath}/rgb.jpg`,
     Thermal: `${basePath}/thermal.jpg`,
     MSX: `${basePath}/msx.jpg`,
+  });
+}
+
+function prefixedScene(name, basePath) {
+  return scene(name, {
+    RGB: `${basePath}_rgb.jpg`,
+    Thermal: `${basePath}_thermal.jpg`,
+    MSX: `${basePath}_msx.jpg`,
   });
 }
 
@@ -253,22 +274,43 @@ function renderWorks(status, containerId) {
     article.id = work.id;
 
     const header = createElement("header", "project-header");
-    const meta = createElement("div", "project-meta");
-    meta.append(createElement("span", "pill", work.status));
-    meta.append(createElement("span", "count", `${work.images.length} visual assets`));
-
-    header.append(meta);
+    header.append(createElement("span", "pill", work.venue));
     header.append(createElement("h3", null, work.title));
     header.append(createElement("p", null, work.description));
 
-    const gallery = createElement("div", "project-gallery");
-    for (const image of work.images) {
-      gallery.append(renderFigure(image.src, image.caption, `${work.title}: ${image.caption}`));
+    const body = createElement("div", "project-body");
+    for (const section of work.sections) {
+      body.append(renderWorkSection(section));
     }
 
-    article.append(header, gallery);
+    article.append(header, body);
     container.append(article);
   }
+}
+
+function renderWorkSection(section) {
+  const block = createElement("section", "work-section");
+  block.append(createElement("h4", null, section.heading));
+  block.append(createElement("p", null, section.body));
+
+  const figureList = createElement("div", "work-figure-list");
+  for (const item of section.figures) {
+    figureList.append(renderWorkFigure(item));
+  }
+  block.append(figureList);
+
+  return block;
+}
+
+function renderWorkFigure(item) {
+  const figureElement = createElement("figure", "work-figure");
+  const image = document.createElement("img");
+  image.src = item.src;
+  image.alt = item.alt;
+  image.loading = "lazy";
+  image.decoding = "async";
+  figureElement.append(image, createElement("figcaption", null, item.caption));
+  return figureElement;
 }
 
 function renderDatasets() {
@@ -282,56 +324,74 @@ function renderDatasets() {
     block.id = dataset.id;
 
     const header = createElement("header", "dataset-header");
-    const meta = createElement("div", "dataset-meta");
-    const imageCount = dataset.scenes.reduce(
-      (total, item) => total + Object.keys(item.images).length,
-      0,
-    );
-    meta.append(createElement("span", "pill", dataset.name));
-    meta.append(createElement("span", "count", `${dataset.scenes.length} scenes / ${imageCount} images`));
-    header.append(meta);
     header.append(createElement("h3", null, dataset.name));
     header.append(createElement("p", null, dataset.summary));
 
-    const grid = createElement("div", "scene-grid");
-    for (const item of dataset.scenes) {
-      grid.append(renderSceneCard(dataset.name, item));
-    }
-
-    block.append(header, grid);
+    block.append(header, renderDatasetTable(dataset));
     container.append(block);
   }
 }
 
-function renderSceneCard(datasetName, item) {
-  const card = createElement("article", "scene-card");
-  card.append(createElement("h4", null, item.name));
+function renderDatasetTable(dataset) {
+  const wrapper = createElement("div", "dataset-table-wrap");
+  const table = createElement("table", "dataset-table");
+  const hasMsx = dataset.scenes.some((item) => "MSX" in item.images);
 
-  const modalities = createElement("div", "modalities");
-  const entries = Object.entries(item.images);
-  if (entries.length === 2) {
-    modalities.classList.add("two-column");
+  table.append(createElement("caption", null, dataset.caption));
+
+  const thead = document.createElement("thead");
+  const headerRow = document.createElement("tr");
+  const headers = hasMsx
+    ? ["Scene", "RGB", "Thermal", "MSX", "Views", "Temp. Range"]
+    : ["Scene", "RGB", "Thermal", "Views", "Temp. Range"];
+  for (const header of headers) {
+    headerRow.append(createElement("th", header === "Temp. Range" ? "temperature" : null, header));
+  }
+  thead.append(headerRow);
+
+  const tbody = document.createElement("tbody");
+  for (const item of dataset.scenes) {
+    tbody.append(renderDatasetRow(dataset.name, item, hasMsx));
   }
 
-  for (const [label, src] of entries) {
-    modalities.append(renderFigure(src, label, `${datasetName} ${item.name} ${label}`));
-  }
-
-  card.append(modalities);
-  return card;
+  table.append(thead, tbody);
+  wrapper.append(table);
+  return wrapper;
 }
 
-function renderFigure(src, caption, alt) {
-  const figure = createElement("figure", caption.length < 12 ? "modality" : "project-figure");
-  const frame = createElement("div", "image-frame");
+function renderDatasetRow(datasetName, item, hasMsx) {
+  const row = createElement("tr", "dataset-row");
+  const sceneCell = document.createElement("td");
+  sceneCell.append(createElement("strong", null, item.name));
+  row.append(sceneCell);
+
+  row.append(renderDatasetImageCell(datasetName, item, "RGB"));
+  row.append(renderDatasetImageCell(datasetName, item, "Thermal"));
+  if (hasMsx) {
+    row.append(renderDatasetImageCell(datasetName, item, "MSX"));
+  }
+  row.append(createElement("td", null, item.views));
+  row.append(createElement("td", "temperature", item.temperature));
+
+  return row;
+}
+
+function renderDatasetImageCell(datasetName, item, modality) {
+  const cell = document.createElement("td");
+  const imagePath = item.images[modality];
+  if (!imagePath) {
+    cell.textContent = "-";
+    return cell;
+  }
+
   const image = document.createElement("img");
-  image.src = src;
-  image.alt = alt;
+  image.className = "dataset-thumb";
+  image.src = imagePath;
+  image.alt = `${datasetName} ${item.name} ${modality}`;
   image.loading = "lazy";
   image.decoding = "async";
-  frame.append(image);
-  figure.append(frame, createElement("figcaption", null, caption));
-  return figure;
+  cell.append(image);
+  return cell;
 }
 
 function setupActiveNavigation() {
