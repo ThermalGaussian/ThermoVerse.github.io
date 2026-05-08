@@ -1,0 +1,3 @@
+comparsion是不对齐数据集的定性对比
+comparsion_x8是不对齐数据集超分的定性对比
+comparsion_x8_1是对齐数据集超分的定性对比
