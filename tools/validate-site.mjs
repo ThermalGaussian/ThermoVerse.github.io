@@ -75,7 +75,10 @@ assert(css.includes("text-align: left"), "ThermalGaussian authors and affiliatio
 assert(css.includes("title-row"), "ThermalGaussian title and resource links should share a row");
 assert(css.includes("author-item"), "ThermalGaussian authors should render as spaced items");
 assert(css.includes("affiliation-item"), "ThermalGaussian affiliations should render as spaced items");
+assert(css.includes("text-align: justify"), "Abstract text should be justified");
+assert(css.includes("width: fit-content"), "Dataset tables should not be forced to fill the full content width");
 assert(css.includes("is-wide"), "ThermalGaussian Pipeline and Comparisons figures should support a wider display size");
+assert(js.includes("renderTextWithLinks"), "Work section text should support inline links");
 
 const moduleUrl = `${pathToFileURL(path.join(root, "assets/site.js")).href}?t=${Date.now()}`;
 const { works, datasets } = await import(moduleUrl);
@@ -231,6 +234,29 @@ for (const [sceneName, expected] of expectedExtendMetadata) {
   const item = rgbtScenesExtend.scenes.find((scene) => scene.name === sceneName);
   assert(item, `RGBT-Scenes-extend is missing ${sceneName}`);
   assert(item.views === expected.views, `${sceneName} Views metadata is incorrect`);
+  assert(item.temperature === expected.temperature, `${sceneName} Temp. Range metadata is incorrect`);
+}
+
+const dynamicRgbtScenes = datasets.find((dataset) => dataset.name === "DynamicRGBT-Scenes");
+const expectedDynamicMetadata = new Map([
+  ["Heating Table", { frames: "345", temperature: "10°C - 120°C" }],
+  ["HeatGun", { frames: "768", temperature: "10°C - 120°C" }],
+  ["Covers", { frames: "266", temperature: "20°C - 80°C" }],
+  ["HairDryer", { frames: "560", temperature: "20°C - 80°C" }],
+  ["Ironing Cloth", { frames: "752", temperature: "20°C - 80°C" }],
+  ["Hotwater", { frames: "808", temperature: "20°C - 80°C" }],
+  ["HotBar", { frames: "624", temperature: "10°C - 120°C" }],
+  ["Bacon", { frames: "608", temperature: "20°C - 100°C" }],
+  ["IcePacks", { frames: "680", temperature: "-10°C - 50°C" }],
+  ["HairDryer Dark", { frames: "736", temperature: "20°C - 80°C" }],
+  ["Candles", { frames: "576", temperature: "20°C - 80°C" }],
+  ["Foam", { frames: "536", temperature: "20°C - 70°C" }],
+]);
+assert(dynamicRgbtScenes.countLabel === "Frames", "DynamicRGBT-Scenes must use Frames as the count column label");
+for (const [sceneName, expected] of expectedDynamicMetadata) {
+  const item = dynamicRgbtScenes.scenes.find((scene) => scene.name === sceneName);
+  assert(item, `DynamicRGBT-Scenes is missing ${sceneName}`);
+  assert(item.views === expected.frames, `${sceneName} Frames metadata is incorrect`);
   assert(item.temperature === expected.temperature, `${sceneName} Temp. Range metadata is incorrect`);
 }
 

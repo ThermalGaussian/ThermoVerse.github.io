@@ -203,6 +203,10 @@ async function inspectViewport(client, pageUrl, viewport, screenshotName) {
           workFigures: document.querySelectorAll(".work-figure").length,
           wideFigures: document.querySelectorAll("#thermalgaussian .work-figure.is-wide").length,
           resourceLinks: document.querySelectorAll(".project-card .resource-link").length,
+          dynamicHeaders: [...document.querySelectorAll("#dataset-dynamic-rgbt-scenes th")].map((cell) => cell.textContent.trim()),
+          abstractLinks: document.querySelectorAll(".abstract-text a[href='https://thermalgaussian.github.io/']").length,
+          abstractTextAlign: getComputedStyle(document.querySelector(".abstract-text")).textAlign,
+          widestDatasetTable: Math.max(...[...document.querySelectorAll(".dataset-table")].map((table) => table.getBoundingClientRect().width)),
           images: document.querySelectorAll("main img").length,
           projectImagesLoaded: [...document.querySelectorAll(".work-figure img")].every((image) => image.complete && image.naturalWidth > 0),
           croppedProjectImages: [...document.querySelectorAll(".work-figure img")].filter((image) => {
@@ -301,6 +305,16 @@ try {
   assert(mobileMetrics.wideFigures === 3, "Mobile ThermalGaussian Pipeline and Comparisons figures must be wide");
   assert(desktopMetrics.resourceLinks === expectedResourceLinks, "Desktop render must include all resource links");
   assert(mobileMetrics.resourceLinks === expectedResourceLinks, "Mobile render must include all resource links");
+  assert(desktopMetrics.dynamicHeaders.includes("Frames"), "Desktop DynamicRGBT-Scenes table must use Frames header");
+  assert(mobileMetrics.dynamicHeaders.includes("Frames"), "Mobile DynamicRGBT-Scenes table must use Frames header");
+  assert(desktopMetrics.abstractLinks === 1, "Desktop render must link the ThermalGaussian project page URL");
+  assert(mobileMetrics.abstractLinks === 1, "Mobile render must link the ThermalGaussian project page URL");
+  assert(desktopMetrics.abstractTextAlign === "justify", "Desktop Abstract text must be justified");
+  assert(mobileMetrics.abstractTextAlign === "justify", "Mobile Abstract text must be justified");
+  assert(
+    desktopMetrics.widestDatasetTable < desktopMetrics.clientWidth - 80,
+    "Desktop dataset tables should not fill the full page width",
+  );
   assert(desktopMetrics.croppedProjectImages === 0, "Desktop project images must preserve natural aspect ratios");
   assert(mobileMetrics.croppedProjectImages === 0, "Mobile project images must preserve natural aspect ratios");
   assert(desktopMetrics.images === expectedMainImages, "Desktop render must include all main images and resource icons");

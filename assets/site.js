@@ -123,7 +123,8 @@ export const works = [
         number={},
         pages={1-16},
         keywords={Sonar;Feeds;Radio broadcasting;Frequency modulation;Anisotropic;Contacts;Filters;Pixel;Internet of Things;Communication systems;3DGS;Thermal Imaging;View Synthesis;Multimodal 3D Reconstruction;Temperature Field Reconstruction},
-        doi={10.1109/TPAMI.2026.3689388}}`,
+        doi={10.1109/TPAMI.2026.3689388}
+        }`,
       ),
     ],
   },
@@ -300,22 +301,23 @@ export const datasets = [
     id: "dataset-dynamic-rgbt-scenes",
     name: "DynamicRGBT-Scenes",
     display: "table",
+    countLabel: "Frames",
     summary:
       "Dynamic RGB-thermal scenes are displayed with RGB and thermal frame examples.",
     caption: "Each scene in the DynamicRGBT-Scenes dataset is displayed",
     scenes: [
-      dynamicScene("Bacon"),
-      dynamicScene("Candles"),
-      dynamicScene("Covers"),
-      dynamicScene("Foam"),
-      dynamicScene("HairDryer"),
-      dynamicScene("HairDryerDark"),
-      dynamicScene("HeatGun"),
-      dynamicScene("HeatingTable"),
-      dynamicScene("HotBar"),
-      dynamicScene("HotWater"),
-      dynamicScene("IcePacks"),
-      dynamicScene("IroningCloth"),
+      dynamicScene("Heating Table", "HeatingTable", { views: "345", temperature: "10\u00b0C - 120\u00b0C" }),
+      dynamicScene("HeatGun", "HeatGun", { views: "768", temperature: "10\u00b0C - 120\u00b0C" }),
+      dynamicScene("Covers", "Covers", { views: "266", temperature: "20\u00b0C - 80\u00b0C" }),
+      dynamicScene("HairDryer", "HairDryer", { views: "560", temperature: "20\u00b0C - 80\u00b0C" }),
+      dynamicScene("Ironing Cloth", "IroningCloth", { views: "752", temperature: "20\u00b0C - 80\u00b0C" }),
+      dynamicScene("Hotwater", "HotWater", { views: "808", temperature: "20\u00b0C - 80\u00b0C" }),
+      dynamicScene("HotBar", "HotBar", { views: "624", temperature: "10\u00b0C - 120\u00b0C" }),
+      dynamicScene("Bacon", "Bacon", { views: "608", temperature: "20\u00b0C - 100\u00b0C" }),
+      dynamicScene("IcePacks", "IcePacks", { views: "680", temperature: "-10\u00b0C - 50\u00b0C" }),
+      dynamicScene("HairDryer Dark", "HairDryerDark", { views: "736", temperature: "20\u00b0C - 80\u00b0C" }),
+      dynamicScene("Candles", "Candles", { views: "576", temperature: "20\u00b0C - 80\u00b0C" }),
+      dynamicScene("Foam", "Foam", { views: "536", temperature: "20\u00b0C - 70\u00b0C" }),
     ],
   },
 ];
@@ -381,11 +383,11 @@ function prefixedScene(name, basePath, metadata = {}) {
   }, metadata);
 }
 
-function dynamicScene(name) {
+function dynamicScene(name, folderName, metadata = {}) {
   return scene(name, {
-    RGB: `datasets/DynamicRGBT-Scenes/${name}/RGB.png`,
-    Thermal: `datasets/DynamicRGBT-Scenes/${name}/Thermal.png`,
-  });
+    RGB: `datasets/DynamicRGBT-Scenes/${folderName}/RGB.png`,
+    Thermal: `datasets/DynamicRGBT-Scenes/${folderName}/Thermal.png`,
+  }, metadata);
 }
 
 function createElement(tag, className, text) {
@@ -445,7 +447,11 @@ function renderWorkSection(section) {
   if (section.kind === "citation") {
     block.append(createElement("pre", "citation-block", section.body));
   } else {
-    block.append(createElement("p", null, section.body));
+    const paragraph = renderTextWithLinks(section.body);
+    if (section.heading === "Abstract") {
+      paragraph.classList.add("abstract-text");
+    }
+    block.append(paragraph);
   }
 
   if (section.figures.length) {
@@ -457,6 +463,39 @@ function renderWorkSection(section) {
   }
 
   return block;
+}
+
+function renderTextWithLinks(text) {
+  const paragraph = createElement("p");
+  const urlPattern = /https?:\/\/[^\s]+/g;
+  let lastIndex = 0;
+
+  for (const match of text.matchAll(urlPattern)) {
+    const rawUrl = match[0];
+    const start = match.index;
+    if (start > lastIndex) {
+      paragraph.append(document.createTextNode(text.slice(lastIndex, start)));
+    }
+
+    const trailingPunctuation = rawUrl.match(/[.,;:!?)]$/)?.[0] ?? "";
+    const href = trailingPunctuation ? rawUrl.slice(0, -1) : rawUrl;
+    const link = document.createElement("a");
+    link.href = href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = href;
+    paragraph.append(link);
+    if (trailingPunctuation) {
+      paragraph.append(document.createTextNode(trailingPunctuation));
+    }
+    lastIndex = start + rawUrl.length;
+  }
+
+  if (lastIndex < text.length) {
+    paragraph.append(document.createTextNode(text.slice(lastIndex)));
+  }
+
+  return paragraph;
 }
 
 function renderWorkFigure(item) {
@@ -551,9 +590,10 @@ function renderDatasetTable(dataset) {
 
   const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
+  const countHeader = dataset.countLabel ?? "Views";
   const headers = hasMsx
-    ? ["Scene", "RGB", "Thermal", "MSX", "Views", "Temp. Range"]
-    : ["Scene", "RGB", "Thermal", "Views", "Temp. Range"];
+    ? ["Scene", "RGB", "Thermal", "MSX", countHeader, "Temp. Range"]
+    : ["Scene", "RGB", "Thermal", countHeader, "Temp. Range"];
   for (const header of headers) {
     headerRow.append(createElement("th", header === "Temp. Range" ? "temperature" : null, header));
   }

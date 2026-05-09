@@ -261,6 +261,18 @@ a {
   color: var(--muted);
 }
 
+.work-section a {
+  color: var(--accent-strong);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.abstract-text {
+  text-align: justify;
+  text-align-last: left;
+}
+
 .citation-block {
   margin: 0;
   overflow-x: auto;
@@ -299,8 +311,7 @@ a {
 
 .author-item,
 .affiliation-item {
-  display: inline-flex;
-  align-items: baseline;
+  display: inline-block;
 }
 
 .author-line strong {
@@ -310,7 +321,18 @@ a {
 .author-line sup,
 .affiliation-line sup {
   font-size: 0.68em;
-  line-height: 0;
+  line-height: 1;
+  position: relative;
+  top: -0.42em;
+  vertical-align: baseline;
+}
+
+.author-line sup {
+  margin-left: 1px;
+}
+
+.affiliation-line sup {
+  margin-right: 1px;
 }
 
 .affiliation-line {
@@ -406,7 +428,7 @@ figcaption {
 }
 
 .dataset-table-wrap {
-  width: 100%;
+  width: fit-content;
   min-width: 0;
   max-width: 100%;
   overflow-x: auto;
@@ -416,8 +438,8 @@ figcaption {
 }
 
 .dataset-table {
-  width: 100%;
-  min-width: 940px;
+  width: auto;
+  min-width: 0;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -433,7 +455,7 @@ figcaption {
 .dataset-table th,
 .dataset-table td {
   border-top: 1px solid var(--line);
-  padding: 10px;
+  padding: 8px 10px;
   text-align: center;
   vertical-align: middle;
 }
@@ -454,7 +476,7 @@ figcaption {
 
 .dataset-table td:first-child,
 .dataset-table th:first-child {
-  width: 12%;
+  width: 136px;
 }
 
 .dataset-table td:first-child {
@@ -462,11 +484,11 @@ figcaption {
 }
 
 .dataset-table .temperature {
-  width: 14%;
+  width: 118px;
 }
 
 .dataset-thumb {
-  width: 160px;
+  width: 136px;
   max-width: 100%;
   height: auto;
   margin: 0 auto;
@@ -579,6 +601,6 @@ figcaption {
   }
 
   .dataset-table {
-    min-width: 760px;
+    min-width: 680px;
   }
 }
