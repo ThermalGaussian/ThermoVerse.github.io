@@ -16,6 +16,10 @@ const expectedWorkFigures = works.reduce(
 );
 const expectedResourceLinks = works.reduce((total, work) => total + (work.links?.length ?? 0), 0);
 const expectedSceneCount = datasets.reduce((total, dataset) => total + dataset.scenes.length, 0);
+const expectedDatasetRows = datasets.reduce(
+  (total, dataset) => total + (dataset.layout === "paired" ? Math.ceil(dataset.scenes.length / 2) : dataset.scenes.length),
+  0,
+);
 const expectedDatasetImages = datasets.reduce(
   (total, dataset) => total + dataset.scenes.reduce((sceneTotal, scene) => sceneTotal + Object.keys(scene.images).length, 0),
   0,
@@ -204,8 +208,11 @@ async function inspectViewport(client, pageUrl, viewport, screenshotName) {
           wideFigures: document.querySelectorAll("#thermalgaussian .work-figure.is-wide").length,
           resourceLinks: document.querySelectorAll(".project-card .resource-link").length,
           dynamicHeaders: [...document.querySelectorAll("#dataset-dynamic-rgbt-scenes th")].map((cell) => cell.textContent.trim()),
+          dynamicRows: document.querySelectorAll("#dataset-dynamic-rgbt-scenes .dataset-row").length,
+          dynamicPairedCells: document.querySelector("#dataset-dynamic-rgbt-scenes .dataset-row")?.children.length ?? 0,
           abstractLinks: document.querySelectorAll(".abstract-text a[href='https://thermalgaussian.github.io/']").length,
           abstractTextAlign: getComputedStyle(document.querySelector(".abstract-text")).textAlign,
+          proseTextJustified: [...document.querySelectorAll(".hero p, .dataset-header p, .work-section p")].every((element) => getComputedStyle(element).textAlign === "justify"),
           widestDatasetTable: Math.max(...[...document.querySelectorAll(".dataset-table")].map((table) => table.getBoundingClientRect().width)),
           images: document.querySelectorAll("main img").length,
           projectImagesLoaded: [...document.querySelectorAll(".work-figure img")].every((image) => image.complete && image.naturalWidth > 0),
@@ -295,8 +302,8 @@ try {
   assert(mobileMetrics.projects === works.length, "Mobile render must include all projects");
   assert(desktopMetrics.datasets === datasets.length, "Desktop render must include all datasets");
   assert(mobileMetrics.datasets === datasets.length, "Mobile render must include all datasets");
-  assert(desktopMetrics.scenes === expectedSceneCount, "Desktop render must include all scenes");
-  assert(mobileMetrics.scenes === expectedSceneCount, "Mobile render must include all scenes");
+  assert(desktopMetrics.scenes === expectedDatasetRows, "Desktop render must include all expected dataset rows");
+  assert(mobileMetrics.scenes === expectedDatasetRows, "Mobile render must include all expected dataset rows");
   assert(desktopMetrics.tables === datasets.length, "Desktop render must include all dataset tables");
   assert(mobileMetrics.tables === datasets.length, "Mobile render must include all dataset tables");
   assert(desktopMetrics.workFigures === expectedWorkFigures, "Desktop render must include all work figures");
@@ -307,10 +314,16 @@ try {
   assert(mobileMetrics.resourceLinks === expectedResourceLinks, "Mobile render must include all resource links");
   assert(desktopMetrics.dynamicHeaders.includes("Frames"), "Desktop DynamicRGBT-Scenes table must use Frames header");
   assert(mobileMetrics.dynamicHeaders.includes("Frames"), "Mobile DynamicRGBT-Scenes table must use Frames header");
+  assert(desktopMetrics.dynamicRows === 6, "Desktop DynamicRGBT-Scenes paired table must render six rows");
+  assert(mobileMetrics.dynamicRows === 6, "Mobile DynamicRGBT-Scenes paired table must render six rows");
+  assert(desktopMetrics.dynamicPairedCells === 10, "Desktop DynamicRGBT-Scenes rows must contain two scene groups");
+  assert(mobileMetrics.dynamicPairedCells === 10, "Mobile DynamicRGBT-Scenes rows must contain two scene groups");
   assert(desktopMetrics.abstractLinks === 1, "Desktop render must link the ThermalGaussian project page URL");
   assert(mobileMetrics.abstractLinks === 1, "Mobile render must link the ThermalGaussian project page URL");
   assert(desktopMetrics.abstractTextAlign === "justify", "Desktop Abstract text must be justified");
   assert(mobileMetrics.abstractTextAlign === "justify", "Mobile Abstract text must be justified");
+  assert(desktopMetrics.proseTextJustified, "Desktop prose text must be justified");
+  assert(mobileMetrics.proseTextJustified, "Mobile prose text must be justified");
   assert(
     desktopMetrics.widestDatasetTable < desktopMetrics.clientWidth - 80,
     "Desktop dataset tables should not fill the full page width",

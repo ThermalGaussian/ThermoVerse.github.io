@@ -157,6 +157,8 @@ a {
   margin: 22px 0 0;
   color: rgba(255, 255, 255, 0.9);
   font-size: 1.14rem;
+  text-align: justify;
+  text-align-last: left;
 }
 
 .content-section {
@@ -259,6 +261,12 @@ a {
 .work-section p {
   margin: 0;
   color: var(--muted);
+}
+
+.dataset-header p,
+.work-section p {
+  text-align: justify;
+  text-align-last: left;
 }
 
 .work-section a {
@@ -495,6 +503,28 @@ figcaption {
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #f3f5f2;
+}
+
+.dataset-table.is-paired {
+  min-width: 1060px;
+}
+
+.dataset-table.is-paired td:first-child,
+.dataset-table.is-paired th:first-child,
+.dataset-table.is-paired td:nth-child(6),
+.dataset-table.is-paired th:nth-child(6) {
+  width: 116px;
+}
+
+.dataset-table.is-paired th:nth-child(5),
+.dataset-table.is-paired td:nth-child(5),
+.dataset-table.is-paired th:nth-child(10),
+.dataset-table.is-paired td:nth-child(10) {
+  width: 96px;
+}
+
+.dataset-table.is-paired .dataset-thumb {
+  width: 112px;
 }
 
 @media (max-width: 980px) {

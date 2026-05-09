@@ -253,6 +253,7 @@ const expectedDynamicMetadata = new Map([
   ["Foam", { frames: "536", temperature: "20°C - 70°C" }],
 ]);
 assert(dynamicRgbtScenes.countLabel === "Frames", "DynamicRGBT-Scenes must use Frames as the count column label");
+assert(dynamicRgbtScenes.layout === "paired", "DynamicRGBT-Scenes must use the paired two-column table layout");
 for (const [sceneName, expected] of expectedDynamicMetadata) {
   const item = dynamicRgbtScenes.scenes.find((scene) => scene.name === sceneName);
   assert(item, `DynamicRGBT-Scenes is missing ${sceneName}`);

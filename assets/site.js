@@ -301,6 +301,7 @@ export const datasets = [
     id: "dataset-dynamic-rgbt-scenes",
     name: "DynamicRGBT-Scenes",
     display: "table",
+    layout: "paired",
     countLabel: "Frames",
     summary:
       "Dynamic RGB-thermal scenes are displayed with RGB and thermal frame examples.",
@@ -585,23 +586,41 @@ function renderDatasetTable(dataset) {
   const wrapper = createElement("div", "dataset-table-wrap");
   const table = createElement("table", "dataset-table");
   const hasMsx = dataset.scenes.some((item) => "MSX" in item.images);
+  const countHeader = dataset.countLabel ?? "Views";
 
   table.append(createElement("caption", null, dataset.caption));
 
   const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
-  const countHeader = dataset.countLabel ?? "Views";
   const headers = hasMsx
     ? ["Scene", "RGB", "Thermal", "MSX", countHeader, "Temp. Range"]
     : ["Scene", "RGB", "Thermal", countHeader, "Temp. Range"];
+
+  if (dataset.layout === "paired") {
+    table.classList.add("is-paired");
+    headers.push(...headers);
+  }
+
   for (const header of headers) {
     headerRow.append(createElement("th", header === "Temp. Range" ? "temperature" : null, header));
   }
   thead.append(headerRow);
 
   const tbody = document.createElement("tbody");
-  for (const item of dataset.scenes) {
-    tbody.append(renderDatasetRow(dataset.name, item, hasMsx));
+  if (dataset.layout === "paired") {
+    const midpoint = Math.ceil(dataset.scenes.length / 2);
+    const leftScenes = dataset.scenes.slice(0, midpoint);
+    const rightScenes = dataset.scenes.slice(midpoint);
+    for (let index = 0; index < leftScenes.length; index += 1) {
+      const row = createElement("tr", "dataset-row");
+      appendDatasetCells(row, dataset.name, leftScenes[index], hasMsx);
+      appendDatasetCells(row, dataset.name, rightScenes[index], hasMsx);
+      tbody.append(row);
+    }
+  } else {
+    for (const item of dataset.scenes) {
+      tbody.append(renderDatasetRow(dataset.name, item, hasMsx));
+    }
   }
 
   table.append(thead, tbody);
@@ -611,7 +630,19 @@ function renderDatasetTable(dataset) {
 
 function renderDatasetRow(datasetName, item, hasMsx) {
   const row = createElement("tr", "dataset-row");
+  appendDatasetCells(row, datasetName, item, hasMsx);
+  return row;
+}
+
+function appendDatasetCells(row, datasetName, item, hasMsx) {
   const sceneCell = document.createElement("td");
+  if (!item) {
+    const span = hasMsx ? 6 : 5;
+    sceneCell.colSpan = span;
+    row.append(sceneCell);
+    return;
+  }
+
   sceneCell.append(createElement("strong", null, item.name));
   row.append(sceneCell);
 
@@ -622,8 +653,6 @@ function renderDatasetRow(datasetName, item, hasMsx) {
   }
   row.append(createElement("td", null, item.views));
   row.append(createElement("td", "temperature", item.temperature));
-
-  return row;
 }
 
 function renderDatasetImageCell(datasetName, item, modality) {
