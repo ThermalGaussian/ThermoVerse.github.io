@@ -3,11 +3,24 @@ import fs from "node:fs/promises";
 import http from "node:http";
 import net from "node:net";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const edgePath = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
 const outputDir = path.join(root, ".site-check");
+const moduleUrl = `${pathToFileURL(path.join(root, "assets/site.js")).href}?t=${Date.now()}`;
+const { works, datasets } = await import(moduleUrl);
+const expectedWorkFigures = works.reduce(
+  (total, work) => total + work.sections.reduce((sectionTotal, section) => sectionTotal + section.figures.length, 0),
+  0,
+);
+const expectedResourceLinks = works.reduce((total, work) => total + (work.links?.length ?? 0), 0);
+const expectedSceneCount = datasets.reduce((total, dataset) => total + dataset.scenes.length, 0);
+const expectedDatasetImages = datasets.reduce(
+  (total, dataset) => total + dataset.scenes.reduce((sceneTotal, scene) => sceneTotal + Object.keys(scene.images).length, 0),
+  0,
+);
+const expectedMainImages = expectedWorkFigures + expectedResourceLinks + expectedDatasetImages;
 
 function assert(condition, message) {
   if (!condition) {
@@ -189,7 +202,7 @@ async function inspectViewport(client, pageUrl, viewport, screenshotName) {
           tables: document.querySelectorAll(".dataset-table").length,
           workFigures: document.querySelectorAll(".work-figure").length,
           wideFigures: document.querySelectorAll("#thermalgaussian .work-figure.is-wide").length,
-          resourceLinks: document.querySelectorAll("#thermalgaussian .resource-link").length,
+          resourceLinks: document.querySelectorAll(".project-card .resource-link").length,
           images: document.querySelectorAll("main img").length,
           projectImagesLoaded: [...document.querySelectorAll(".work-figure img")].every((image) => image.complete && image.naturalWidth > 0),
           croppedProjectImages: [...document.querySelectorAll(".work-figure img")].filter((image) => {
@@ -274,24 +287,24 @@ try {
   desktop.close();
   mobile.close();
 
-  assert(desktopMetrics.projects === 4, "Desktop render must include four projects");
-  assert(mobileMetrics.projects === 4, "Mobile render must include four projects");
-  assert(desktopMetrics.datasets === 4, "Desktop render must include four datasets");
-  assert(mobileMetrics.datasets === 4, "Mobile render must include four datasets");
-  assert(desktopMetrics.scenes === 36, "Desktop render must include all scenes");
-  assert(mobileMetrics.scenes === 36, "Mobile render must include all scenes");
-  assert(desktopMetrics.tables === 4, "Desktop render must include four dataset tables");
-  assert(mobileMetrics.tables === 4, "Mobile render must include four dataset tables");
-  assert(desktopMetrics.workFigures === 11, "Desktop render must include all work figures");
-  assert(mobileMetrics.workFigures === 11, "Mobile render must include all work figures");
+  assert(desktopMetrics.projects === works.length, "Desktop render must include all projects");
+  assert(mobileMetrics.projects === works.length, "Mobile render must include all projects");
+  assert(desktopMetrics.datasets === datasets.length, "Desktop render must include all datasets");
+  assert(mobileMetrics.datasets === datasets.length, "Mobile render must include all datasets");
+  assert(desktopMetrics.scenes === expectedSceneCount, "Desktop render must include all scenes");
+  assert(mobileMetrics.scenes === expectedSceneCount, "Mobile render must include all scenes");
+  assert(desktopMetrics.tables === datasets.length, "Desktop render must include all dataset tables");
+  assert(mobileMetrics.tables === datasets.length, "Mobile render must include all dataset tables");
+  assert(desktopMetrics.workFigures === expectedWorkFigures, "Desktop render must include all work figures");
+  assert(mobileMetrics.workFigures === expectedWorkFigures, "Mobile render must include all work figures");
   assert(desktopMetrics.wideFigures === 3, "Desktop ThermalGaussian Pipeline and Comparisons figures must be wide");
   assert(mobileMetrics.wideFigures === 3, "Mobile ThermalGaussian Pipeline and Comparisons figures must be wide");
-  assert(desktopMetrics.resourceLinks === 3, "Desktop ThermalGaussian header must include three resource links");
-  assert(mobileMetrics.resourceLinks === 3, "Mobile ThermalGaussian header must include three resource links");
+  assert(desktopMetrics.resourceLinks === expectedResourceLinks, "Desktop render must include all resource links");
+  assert(mobileMetrics.resourceLinks === expectedResourceLinks, "Mobile render must include all resource links");
   assert(desktopMetrics.croppedProjectImages === 0, "Desktop project images must preserve natural aspect ratios");
   assert(mobileMetrics.croppedProjectImages === 0, "Mobile project images must preserve natural aspect ratios");
-  assert(desktopMetrics.images === 110, "Desktop render must include all main images and resource icons");
-  assert(mobileMetrics.images === 110, "Mobile render must include all main images and resource icons");
+  assert(desktopMetrics.images === expectedMainImages, "Desktop render must include all main images and resource icons");
+  assert(mobileMetrics.images === expectedMainImages, "Mobile render must include all main images and resource icons");
   assert(!desktopMetrics.overflowX, "Desktop viewport has horizontal overflow");
   assert(!mobileMetrics.overflowX, "Mobile viewport has horizontal overflow");
 

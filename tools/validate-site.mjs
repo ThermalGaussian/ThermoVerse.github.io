@@ -63,7 +63,7 @@ assert(!css.includes("object-fit: cover"), "Images must not be cropped with obje
 assert(!css.includes("/ cover no-repeat"), "Hero background must not use cover cropping");
 assert(/loading\s*=\s*["']lazy["']/.test(js), "Images must be rendered with lazy loading");
 assert(!js.includes("visual assets"), "Project headers must not show visual asset counts");
-assert(!js.includes("Placeholder description: a thermal-aware"), "ThermalGaussian placeholder description must be removed");
+assert(!js.includes("Placeholder description"), "Placeholder project descriptions must be removed");
 assert(js.includes("Published in ICLR 2025"), "ThermalGaussian venue label is required");
 assert(js.includes("ThermalGaussian: Thermal 3D Gaussian Splatting"), "ThermalGaussian title must include the full paper title");
 assert(js.includes("Rongfeng Lu"), "ThermalGaussian authors must be listed");
@@ -86,28 +86,44 @@ assert(works.length === 4, "Expected four works");
 assert(datasets.length === 4, "Expected four datasets");
 
 const expectedWorks = new Map([
-  ["ThermalGaussian: Thermal 3D Gaussian Splatting", "Published"],
-  ["ThermalGaussian++", "Published"],
-  ["ThermalGaussian-X", "Submitted"],
-  ["Dynamic Thermal Gaussians", "Submitted"],
+  ["thermalgaussian", "Published"],
+  ["thermalgaussian-plus-plus", "Published"],
+  ["thermalgaussian-x", "Submitted"],
+  ["dynamic-thermal-gaussians", "Submitted"],
 ]);
 
-for (const [title, status] of expectedWorks) {
-  const work = works.find((item) => item.title === title);
-  assert(work, `Missing work: ${title}`);
-  assert(work.status === status, `${title} must be marked ${status}`);
-  assert(Array.isArray(work.sections) && work.sections.length > 0, `${title} must include project sections`);
+for (const [id, status] of expectedWorks) {
+  const work = works.find((item) => item.id === id);
+  assert(work, `Missing work: ${id}`);
+  assert(work.title, `${id} must include a title`);
+  assert(work.status === status, `${work.title} must be marked ${status}`);
+  assert(work.venue, `${work.title} must include a venue label`);
+  assert(Array.isArray(work.sections) && work.sections.length > 0, `${work.title} must include project sections`);
+  if (work.authors) {
+    assert(Array.isArray(work.authors), `${work.title} authors must be an array`);
+  }
+  if (work.affiliations) {
+    assert(Array.isArray(work.affiliations), `${work.title} affiliations must be an array`);
+  }
+  if (work.links) {
+    assert(Array.isArray(work.links), `${work.title} links must be an array`);
+    for (const link of work.links) {
+      assert(link.label, `${work.title} resource links must include labels`);
+      assert(link.href?.startsWith("https://"), `${work.title} ${link.label} link must be an external HTTPS URL`);
+      await assertExists(link.icon);
+    }
+  }
   for (const section of work.sections) {
-    assert(section.heading, `${title} section headings are required`);
-    assert(section.body, `${title} section body copy is required`);
-    assert(Array.isArray(section.figures), `${title} sections must expose a figures array`);
+    assert(section.heading, `${work.title} section headings are required`);
+    assert(section.body, `${work.title} section body copy is required`);
+    assert(Array.isArray(section.figures), `${work.title} sections must expose a figures array`);
     if (!["Abstract", "Citation"].includes(section.heading)) {
-      assert(section.figures.length > 0, `${title} non-abstract sections must include figures`);
+      assert(section.figures.length > 0, `${work.title} non-abstract sections must include figures`);
     }
     for (const figure of section.figures) {
       await assertExists(figure.src);
-      assert(figure.alt, `${title} figure alt text is required`);
-      assert(figure.caption, `${title} figure captions are required`);
+      assert(figure.alt, `${work.title} figure alt text is required`);
+      assert(figure.caption, `${work.title} figure captions are required`);
     }
   }
 }

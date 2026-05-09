@@ -64,11 +64,29 @@ export const works = [
   },
   {
     id: "thermalgaussian-plus-plus",
-    title: "ThermalGaussian++",
+    title: "ThermalGaussian++: Improving Alignment and Resolution for ThermalGaussian",
     status: "Published",
-    venue: "Published work",
-    description:
-      "Placeholder description: an extended RGB-thermal Gaussian representation with qualitative results for aligned and non-aligned settings.",
+    venue: "Published in TPAMI",
+    authors: [
+      author("Rongfeng Lu", "1"),
+      author("Chi Zhu", "1"),
+      author("Quan Chen", "1"),
+      author("Le Zhang", "1,\u2020"),
+      author("Ming Lu", "1"),
+      author("Tingyu Wang", "1"),
+      author("Haofan Ren", "1"),
+      author("Yitian Xue", "2"),
+      author("Yunfei Guo", "1"),
+      author("Chenggang Yan", "1"),
+    ],
+    affiliations: [
+      affiliation("1", "Hangzhou Dianzi University"),
+      affiliation("2", "Zhejiang University"),
+    ],
+    links: [
+      resourceLink("Paper", "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11505796", "plugins/TGS_plus_plus.png"),
+      resourceLink("Dataset", "https://drive.google.com/drive/folders/1A6kdIjDe7kw-iKQkzjHNw0wgk_3V7hcp?usp=sharing", "plugins/google-drive.png"),
+    ],
     sections: [
       workSection(
         "Non-aligned Reconstruction",
@@ -98,8 +116,26 @@ export const works = [
     title: "ThermalGaussian-X",
     status: "Submitted",
     venue: "Submitted work",
-    description:
-      "Placeholder description: a submitted study exploring RGB-thermal alignment and reconstruction under cross-modal observations.",
+    // authors: [
+    //   author("Rongfeng Lu", "1"),
+    //   author("Chi Zhu", "1"),
+    //   author("Quan Chen", "1"),
+    //   author("Le Zhang", "1,\u2020"),
+    //   author("Ming Lu", "1"),
+    //   author("Tingyu Wang", "1"),
+    //   author("Haofan Ren", "1"),
+    //   author("Yitian Xue", "2"),
+    //   author("Yunfei Guo", "1"),
+    //   author("Chenggang Yan", "1"),
+    // ],
+    // affiliations: [
+    //   affiliation("1", "Hangzhou Dianzi University"),
+    //   affiliation("2", "Zhejiang University"),
+    // ],
+    // links: [
+    //   resourceLink("Paper", "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11505796", "plugins/TGS_plus_plus.png"),
+    //   resourceLink("Dataset", "https://drive.google.com/drive/folders/1A6kdIjDe7kw-iKQkzjHNw0wgk_3V7hcp?usp=sharing", "plugins/google-drive.png"),
+    // ],
     sections: [
       workSection(
         "Reconstruction Comparison",
@@ -122,8 +158,27 @@ export const works = [
     title: "Dynamic Thermal Gaussians",
     status: "Submitted",
     venue: "Submitted work",
-    description:
-      "Placeholder description: a submitted dynamic-scene extension for modeling temporal RGB-thermal observations with Gaussian representations.",
+    authors: [
+      author("Rongfeng Lu", "1"),
+      author("Lifeng Lin", "1"),
+      author("Xiaobao Wei", "2"),
+      author("Quan Chen", "1"),
+      author("Ming Lu", "1"),
+      author("Yitian Xue", "3"),
+      author("Yaoqi Sun", "1"),
+      author("Yuhan Gao", "1"),
+      author("Anke Xue", "1"),
+      author("Chenggang Yan", "1"),
+    ],
+    affiliations: [
+      affiliation("1", "Hangzhou Dianzi University"),
+      affiliation("3", "xxx University"),
+      affiliation("3", "Zhejiang University"),
+    ],
+    // links: [
+    //   resourceLink("Paper", "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11505796", "plugins/TGS_plus_plus.png"),
+    //   resourceLink("Dataset", "https://drive.google.com/drive/folders/1A6kdIjDe7kw-iKQkzjHNw0wgk_3V7hcp?usp=sharing", "plugins/google-drive.png"),
+    // ],
     sections: [
       workSection(
         "Dynamic Pipeline",
@@ -322,7 +377,7 @@ function renderWorks(status, containerId) {
     const titleRow = createElement("div", "title-row");
     titleRow.append(createElement("h3", null, work.title));
     if (work.links?.length) {
-      titleRow.append(renderResourceLinks(work.links));
+      titleRow.append(renderResourceLinks(work.links, work.title));
     }
     titleBlock.append(titleRow);
     if (work.authors?.length) {
@@ -408,7 +463,7 @@ function renderAffiliations(affiliations) {
   return list;
 }
 
-function renderResourceLinks(links) {
+function renderResourceLinks(links, workTitle) {
   const list = createElement("div", "resource-links");
   for (const item of links) {
     const link = document.createElement("a");
@@ -416,7 +471,7 @@ function renderResourceLinks(links) {
     link.href = item.href;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.setAttribute("aria-label", `${item.label} for ThermalGaussian`);
+    link.setAttribute("aria-label", `${item.label} for ${workTitle}`);
 
     const icon = document.createElement("img");
     icon.src = item.icon;

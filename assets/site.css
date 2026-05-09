@@ -286,14 +286,14 @@ a {
 }
 
 .author-line {
-  column-gap: 14px;
+  column-gap: 18px;
   row-gap: 4px;
-  font-size: clamp(0.9rem, 1.55vw, 1.12rem);
+  font-size: clamp(0.82rem, 1.12vw, 0.98rem);
   font-weight: 700;
 }
 
 .affiliation-line {
-  column-gap: 18px;
+  column-gap: 22px;
   row-gap: 4px;
 }
 
@@ -314,7 +314,7 @@ a {
 }
 
 .affiliation-line {
-  font-size: clamp(0.84rem, 1.35vw, 1rem);
+  font-size: clamp(0.76rem, 1vw, 0.9rem);
 }
 
 .resource-links {
@@ -373,6 +373,8 @@ a {
 }
 
 .work-figure {
+  width: min(100%, 940px);
+  justify-self: center;
   margin: 0;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -391,7 +393,7 @@ a {
 }
 
 .work-figure.is-wide {
-  width: min(100%, 980px);
+  width: min(100%, 1080px);
   justify-self: center;
 }
 
