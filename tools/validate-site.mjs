@@ -216,4 +216,22 @@ assert(
   "RGBT-Scenes scenes must include Views and Temp. Range metadata",
 );
 
+const rgbtScenesExtend = datasets.find((dataset) => dataset.name === "RGBT-Scenes-extend");
+const expectedExtendMetadata = new Map([
+  ["Glass Cup", { views: "123(train) 18(test)", temperature: "17.0°C - 36.6°C" }],
+  ["Transmission Tower", { views: "154(train) 23(test)", temperature: "-26.4°C - 23.7°C" }],
+  ["Dark Scene", { views: "75(train) 11(test)", temperature: "17.5°C - 21.6°C" }],
+  ["Plant Equipment", { views: "192(train) 28(test)", temperature: "27.8°C - 54.9°C" }],
+]);
+assert(
+  rgbtScenesExtend.caption === "Each scene in the expanded RGBT-Scenes dataset is displayed",
+  "RGBT-Scenes-extend table caption is required",
+);
+for (const [sceneName, expected] of expectedExtendMetadata) {
+  const item = rgbtScenesExtend.scenes.find((scene) => scene.name === sceneName);
+  assert(item, `RGBT-Scenes-extend is missing ${sceneName}`);
+  assert(item.views === expected.views, `${sceneName} Views metadata is incorrect`);
+  assert(item.temperature === expected.temperature, `${sceneName} Temp. Range metadata is incorrect`);
+}
+
 console.log(`Validated ${works.length} works and ${datasets.length} datasets.`);

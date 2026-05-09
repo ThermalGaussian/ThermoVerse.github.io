@@ -84,36 +84,52 @@ export const works = [
       affiliation("2", "Zhejiang University"),
     ],
     links: [
-      resourceLink("Paper", "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11505796", "plugins/TGS_plus_plus.png"),
+      resourceLink("Paper", "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11505796", "plugins/TGS_plus_plus_compressed.png"),
       resourceLink("Dataset", "https://drive.google.com/drive/folders/1A6kdIjDe7kw-iKQkzjHNw0wgk_3V7hcp?usp=sharing", "plugins/google-drive.png"),
     ],
     sections: [
+      textSection(
+        "Abstract",
+        "Thermography is especially valuable for the military and other users of surveillance cameras. Some recent methods based on Neural Radiance Fields (NeRF) have been proposed to reconstruct thermal scenes in 3D from a set of thermal and RGB images. However, unlike NeRF, 3D Gaussian splatting (3DGS) prevails due to its rapid training and real-time rendering. In this work, we propose ThermalGaussian, the first thermal 3DGS approach capable of rendering high-quality images in RGB and thermal modalities. We first calibrate the RGB camera and the thermal camera to ensure that both modalities are accurately aligned. Subsequently, we use the registered images to learn the multimodal 3D Gaussians. To prevent the overfitting of any single modality, we introduce several multimodal regularization constraints. We also develop smoothing constraints tailored to the physical characteristics of the thermal modality. Besides, we contribute a real-world dataset named RGBT-Scenes, captured by a handheld thermal-infrared camera, facilitating future research on thermal scene reconstruction. Based on ThermalGaussian, we further introduce ThermalGaussian++ to improve the alignment and resolution of ThermalGaussian. To improve multimodal alignment, we design a multimodal pose optimization module. This module enables direct processing of non-aligned multimodal image pairs, reducing the need for professional calibration before each use. To improve thermal resolution, we also propose a multimodal joint super-resolution reconstruction module, which enhances the quality of low-resolution thermal fields. Additionally, we contribute a new dataset: RGBT-Scenes++, which offers higher-resolution thermal images. We conduct comprehensive experiments demonstrating that ThermalGaussian++ achieves photorealistic thermal rendering and improves RGB rendering quality. It significantly enhances both alignment and resolution, enabling better practical deployment. In addition, our multimodal regularization constraints reduce the model's storage requirements. The code and datasets will be released.",
+      ),
       workSection(
         "Non-aligned Reconstruction",
         "We compare qualitative reconstruction results on non-aligned RGB-thermal data.",
         [
-          figure("projects/thermalgaussian++/comparsion.png", "ThermalGaussian++ non-aligned reconstruction comparison", "Non-aligned reconstruction comparison"),
+          figure("projects/thermalgaussian++/comparsion.png", "ThermalGaussian++ non-aligned reconstruction comparison", "Qualitative comparison of rendered thermal images from novel viewpoints under non-aligned RGB-thermal inputs."),
         ],
       ),
       workSection(
         "Non-aligned Super-resolution",
         "We show qualitative super-resolution results for non-aligned data.",
         [
-          figure("projects/thermalgaussian++/comparsion_x8.png", "ThermalGaussian++ non-aligned super-resolution comparison", "Non-aligned super-resolution comparison"),
+          figure("projects/thermalgaussian++/comparsion_x8.png", "ThermalGaussian++ non-aligned super-resolution comparison", "Qualitative comparison on RGBT-Scenes++ with ×8 downsampled, non-aligned RGB-thermal inputs."),
         ],
       ),
       workSection(
         "Aligned Super-resolution",
         "We also include qualitative super-resolution results for aligned data.",
         [
-          figure("projects/thermalgaussian++/comparsion_x8_1.png", "ThermalGaussian++ aligned super-resolution comparison", "Aligned super-resolution comparison"),
+          figure("projects/thermalgaussian++/comparsion_x8_1.png", "ThermalGaussian++ aligned super-resolution comparison", "Qualitative comparison on RGBT-Scenes with ×8 downsampled, aligned RGB-thermal inputs."),
         ],
+      ),
+      citationSection(
+        `@ARTICLE{11505796,
+        author={Lu, Rongfeng and Zhu, Chi and Chen, Quan and Zhang, Le and Lu, Ming and Wang, Tingyu and Ren, Haofan and Xue, Yitian and Guo, Yunfei and Yan, Chenggang},
+        journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
+        title={ThermalGaussian++: Improving Alignment and Resolution for ThermalGaussian}, 
+        year={2026},
+        volume={},
+        number={},
+        pages={1-16},
+        keywords={Sonar;Feeds;Radio broadcasting;Frequency modulation;Anisotropic;Contacts;Filters;Pixel;Internet of Things;Communication systems;3DGS;Thermal Imaging;View Synthesis;Multimodal 3D Reconstruction;Temperature Field Reconstruction},
+        doi={10.1109/TPAMI.2026.3689388}}`,
       ),
     ],
   },
   {
     id: "thermalgaussian-x",
-    title: "ThermalGaussian-X",
+    title: "ThermalGaussian-X: RGB and Thermal Alignment via 3D Gaussian Splatting",
     status: "Submitted",
     venue: "Submitted work",
     // authors: [
@@ -137,6 +153,10 @@ export const works = [
     //   resourceLink("Dataset", "https://drive.google.com/drive/folders/1A6kdIjDe7kw-iKQkzjHNw0wgk_3V7hcp?usp=sharing", "plugins/google-drive.png"),
     // ],
     sections: [
+      textSection(
+        "Abstract",
+        "Multimodal image alignment is an essential step for vision tasks that rely on multiple modalities. Most existing methods use deep networks to warp one image to match another. Although effective, such warping is not 3D-aware and often alters the image structure, causing distortion. To address this problem, we propose ThermalGaussian-X, a 3D-aware method that aligns multimodal images via 3D Gaussian Splatting (3DGS). Our model constructs a shared 3DGS model from unaligned multiview RGB and thermal images, automatically learning the relative camera poses between modalities. Specifically, we treat the relative poses as learnable parameters, which are optimized during 3DGS training. We design a dynamic coordinate re-anchoring to localize the coordinate systems, resulting in a stable gradient. We also design an iterative pose regularization to ensure the global consistency of relative camera poses across all viewpoints. Finally, we introduce a multi-task regularization term to improve training stability. Experiments demonstrate that our method achieves state-of-the-art results in both unaligned multimodal reconstruction and multimodal alignment. The code will be released.",
+      ),
       workSection(
         "Reconstruction Comparison",
         "We present qualitative reconstruction comparisons for the submitted ThermalGaussian-X project.",
@@ -155,31 +175,37 @@ export const works = [
   },
   {
     id: "dynamic-thermal-gaussians",
-    title: "Dynamic Thermal Gaussians",
+    title: "Dynamic Thermal Gaussians: Multimodal 4D Gaussian Splatting",
     status: "Submitted",
     venue: "Submitted work",
     authors: [
       author("Rongfeng Lu", "1"),
       author("Lifeng Lin", "1"),
       author("Xiaobao Wei", "2"),
-      author("Quan Chen", "1"),
+      author("Quan Chen", "3"),
       author("Ming Lu", "1"),
-      author("Yitian Xue", "3"),
-      author("Yaoqi Sun", "1"),
+      author("Yitian Xue", "4"),
+      author("Yaoqi Sun", "5"),
       author("Yuhan Gao", "1"),
       author("Anke Xue", "1"),
       author("Chenggang Yan", "1"),
     ],
     affiliations: [
       affiliation("1", "Hangzhou Dianzi University"),
-      affiliation("3", "xxx University"),
-      affiliation("3", "Zhejiang University"),
+      affiliation("2", "xxx University"),
+      affiliation("3", "Jiaxing University"),
+      affiliation("4", "Zhejiang University"),
+      affiliation("5", "Lishui University"),
     ],
     // links: [
     //   resourceLink("Paper", "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11505796", "plugins/TGS_plus_plus.png"),
     //   resourceLink("Dataset", "https://drive.google.com/drive/folders/1A6kdIjDe7kw-iKQkzjHNw0wgk_3V7hcp?usp=sharing", "plugins/google-drive.png"),
     // ],
     sections: [
+      textSection(
+        "Abstract",
+        "Thermography plays a vital role in military and broader thermal analysis applications. Recent progress in 3D thermal reconstruction has extended temperature analysis from 2D to 3D space, yet most existing works assume static temperature distributions, neglecting the temporal dynamics of heat transfer in real-world environments. To address this limitation, we propose the first 4D thermal field reconstruction framework that simultaneously models dynamic RGB scenes and rapidly evolving thermal fields. Specifically, we introduce a multimodal dynamic scene representation that anchors both the color and thermal modalities to a shared geometric substrate, ensuring their consistency under spatiotemporal deformations. We further design multimodal embeddings to enhance the motion expressiveness for each modality, and propose a multimodal routing mechanism that retains a unified set of shared multimodal Gaussians as the geometric backbone while adaptively spawning modality-specific Gaussians to strengthen the representational capacity in detail-rich regions of each individual modality. In addition, we contribute a novel benchmark dataset featuring high-frequency temperature variations to facilitate the evaluation of 4D reconstruction. Extensive experiments demonstrate that our method achieves high-fidelity spatiotemporal reconstruction of both appearance and temperature. The code and dataset will be released.",
+      ),
       workSection(
         "Dynamic Pipeline",
         "This figure illustrates the dynamic RGB-thermal Gaussian modeling pipeline.",
@@ -233,15 +259,15 @@ export const datasets = [
     caption: "Each scene in the RGBT-Scenes++ dataset is displayed",
     scenes: [
       folderScene("Applicances", "datasets/RGBT-Scenes++/applicances"),
-      folderScene("Chair", "datasets/RGBT-Scenes++/chair"),
-      folderScene("Glass", "datasets/RGBT-Scenes++/glass"),
       folderScene("Human", "datasets/RGBT-Scenes++/human"),
-      folderScene("Laptop", "datasets/RGBT-Scenes++/laptop"),
-      folderScene("Plastic", "datasets/RGBT-Scenes++/plastic"),
-      folderScene("PV Panel 1", "datasets/RGBT-Scenes++/pv_panel1"),
-      folderScene("PV Panel 2", "datasets/RGBT-Scenes++/pv_panel2"),
       folderScene("Refreshments", "datasets/RGBT-Scenes++/refreshments"),
       folderScene("Switch", "datasets/RGBT-Scenes++/switch"),
+      folderScene("Plastic", "datasets/RGBT-Scenes++/plastic"),
+      folderScene("Glass", "datasets/RGBT-Scenes++/glass"),
+      folderScene("Chair", "datasets/RGBT-Scenes++/chair"),
+      folderScene("Laptop", "datasets/RGBT-Scenes++/laptop"),
+      folderScene("PV Panel 1", "datasets/RGBT-Scenes++/pv_panel1"),
+      folderScene("PV Panel 2", "datasets/RGBT-Scenes++/pv_panel2"),
     ],
   },
   {
@@ -249,13 +275,25 @@ export const datasets = [
     name: "RGBT-Scenes-extend",
     display: "table",
     summary:
-      "Extended RGB-thermal scenes are displayed with RGB, thermal, and MSX examples.",
-    caption: "Each scene in the RGBT-Scenes-extend dataset is displayed",
+      "The following are the four scenes extended by RGBT-Scenes.",
+    caption: "Each scene in the expanded RGBT-Scenes dataset is displayed",
     scenes: [
-      prefixedScene("Cup", "datasets/RGBT-Scenes-extend/Cup"),
-      prefixedScene("Dark", "datasets/RGBT-Scenes-extend/Dark"),
-      prefixedScene("Plant", "datasets/RGBT-Scenes-extend/Plant"),
-      prefixedScene("Tower", "datasets/RGBT-Scenes-extend/Tower"),
+      prefixedScene("Glass Cup", "datasets/RGBT-Scenes-extend/Cup", {
+        views: "123(train) 18(test)",
+        temperature: "17.0°C - 36.6°C",
+      }),
+      prefixedScene("Transmission Tower", "datasets/RGBT-Scenes-extend/Tower", {
+        views: "154(train) 23(test)",
+        temperature: "-26.4°C - 23.7°C",
+      }),
+      prefixedScene("Dark Scene", "datasets/RGBT-Scenes-extend/Dark", {
+        views: "75(train) 11(test)",
+        temperature: "17.5°C - 21.6°C",
+      }),
+      prefixedScene("Plant Equipment", "datasets/RGBT-Scenes-extend/Plant", {
+        views: "192(train) 28(test)",
+        temperature: "27.8°C - 54.9°C",
+      }),
     ],
   },
   {
@@ -335,12 +373,12 @@ function folderScene(name, basePath) {
   });
 }
 
-function prefixedScene(name, basePath) {
+function prefixedScene(name, basePath, metadata = {}) {
   return scene(name, {
     RGB: `${basePath}_rgb.jpg`,
     Thermal: `${basePath}_thermal.jpg`,
     MSX: `${basePath}_msx.jpg`,
-  });
+  }, metadata);
 }
 
 function dynamicScene(name) {

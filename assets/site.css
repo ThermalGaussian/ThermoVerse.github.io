@@ -449,6 +449,7 @@ figcaption {
 .dataset-table td {
   color: var(--muted);
   font-size: 0.88rem;
+  overflow-wrap: anywhere;
 }
 
 .dataset-table td:first-child,
