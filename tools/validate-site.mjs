@@ -63,10 +63,14 @@ assert(!css.includes("object-fit: cover"), "Images must not be cropped with obje
 assert(!css.includes("/ cover no-repeat"), "Hero background must not use cover cropping");
 assert(/loading\s*=\s*["']lazy["']/.test(js), "Images must be rendered with lazy loading");
 assert(!js.includes("visual assets"), "Project headers must not show visual asset counts");
+assert(!js.includes("Placeholder description: a thermal-aware"), "ThermalGaussian placeholder description must be removed");
 assert(js.includes("Published in ICLR 2025"), "ThermalGaussian venue label is required");
 assert(js.includes("ThermalGaussian: Thermal 3D Gaussian Splatting"), "ThermalGaussian title must include the full paper title");
 assert(js.includes("Rongfeng Lu"), "ThermalGaussian authors must be listed");
 assert(js.includes("Hangzhou Dianzi University"), "ThermalGaussian affiliations must be listed");
+assert(js.includes("Thermography is especially valuable"), "ThermalGaussian Abstract text is required");
+assert(css.includes("text-align: left"), "ThermalGaussian authors and affiliations should be left aligned");
+assert(css.includes("title-row"), "ThermalGaussian title and resource links should share a row");
 
 const moduleUrl = `${pathToFileURL(path.join(root, "assets/site.js")).href}?t=${Date.now()}`;
 const { works, datasets } = await import(moduleUrl);
@@ -91,7 +95,10 @@ for (const [title, status] of expectedWorks) {
   for (const section of work.sections) {
     assert(section.heading, `${title} section headings are required`);
     assert(section.body, `${title} section body copy is required`);
-    assert(Array.isArray(section.figures) && section.figures.length > 0, `${title} sections must include figures`);
+    assert(Array.isArray(section.figures), `${title} sections must expose a figures array`);
+    if (section.heading !== "Abstract") {
+      assert(section.figures.length > 0, `${title} non-abstract sections must include figures`);
+    }
     for (const figure of section.figures) {
       await assertExists(figure.src);
       assert(figure.alt, `${title} figure alt text is required`);
@@ -112,10 +119,25 @@ assert(
 assert(Array.isArray(thermalGaussian.authors) && thermalGaussian.authors.length === 8, "ThermalGaussian must list eight authors");
 assert(Array.isArray(thermalGaussian.affiliations) && thermalGaussian.affiliations.length === 3, "ThermalGaussian must list three affiliations");
 assert(Array.isArray(thermalGaussian.links) && thermalGaussian.links.length === 3, "ThermalGaussian must include Paper, Code, and Dataset links");
+assert(!("description" in thermalGaussian), "ThermalGaussian should not include a placeholder description");
 for (const link of thermalGaussian.links) {
   assert(["Paper", "Code", "Dataset"].includes(link.label), `Unexpected ThermalGaussian link: ${link.label}`);
   assert(link.href.startsWith("https://"), `${link.label} link must be an external HTTPS URL`);
   await assertExists(link.icon);
+}
+const thermalGaussianHeadings = thermalGaussian.sections.map((section) => section.heading);
+assert(
+  thermalGaussianHeadings[0] === "Pipeline" && thermalGaussianHeadings[1] === "Abstract",
+  "ThermalGaussian Abstract must be directly after Pipeline",
+);
+const abstractSection = thermalGaussian.sections.find((section) => section.heading === "Abstract");
+assert(!abstractSection.figures?.length, "ThermalGaussian Abstract should be text-only");
+const compactHeadings = new Set(["Pipeline", "Comparisons", "Multimodal Regularization"]);
+for (const section of thermalGaussian.sections.filter((item) => compactHeadings.has(item.heading))) {
+  assert(
+    section.figures.every((item) => item.size === "compact"),
+    `ThermalGaussian ${section.heading} figures should be compact`,
+  );
 }
 const regularizationSection = thermalGaussian.sections.find((section) => section.heading === "Multimodal Regularization");
 assert(

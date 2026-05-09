@@ -218,7 +218,18 @@ a {
 
 .project-title-block {
   display: grid;
-  gap: 10px;
+  gap: 9px;
+  min-width: 0;
+}
+
+.title-row {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-row h3 {
   min-width: 0;
 }
 
@@ -255,11 +266,11 @@ a {
   color: var(--ink);
   font-family: Georgia, "Times New Roman", serif;
   line-height: 1.35;
-  text-align: center;
+  text-align: left;
 }
 
 .author-line {
-  font-size: clamp(1.05rem, 2vw, 1.45rem);
+  font-size: clamp(0.9rem, 1.55vw, 1.12rem);
   font-weight: 700;
 }
 
@@ -274,24 +285,25 @@ a {
 }
 
 .affiliation-line {
-  font-size: clamp(0.98rem, 1.7vw, 1.28rem);
+  font-size: clamp(0.84rem, 1.35vw, 1rem);
 }
 
 .resource-links {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(22px, 5vw, 54px);
-  justify-content: center;
-  padding: 4px 0 6px;
+  flex: 0 0 auto;
+  gap: 14px;
+  justify-content: flex-end;
+  padding: 0;
 }
 
 .resource-link {
   display: grid;
-  gap: 8px;
+  gap: 5px;
   justify-items: center;
-  min-width: 64px;
+  min-width: 48px;
   color: var(--ink);
-  font-size: 0.88rem;
+  font-size: 0.75rem;
   font-weight: 800;
   transition:
     color 160ms ease,
@@ -304,8 +316,8 @@ a {
 }
 
 .resource-link img {
-  width: 76px;
-  height: 76px;
+  width: 42px;
+  height: 42px;
   object-fit: contain;
 }
 
@@ -485,6 +497,11 @@ figcaption {
 }
 
 @media (max-width: 720px) {
+  .title-row {
+    display: grid;
+    gap: 12px;
+  }
+
   .site-nav {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
@@ -511,12 +528,13 @@ figcaption {
   }
 
   .resource-links {
-    gap: 18px;
+    justify-content: flex-start;
+    gap: 12px;
   }
 
   .resource-link img {
-    width: 58px;
-    height: 58px;
+    width: 38px;
+    height: 38px;
   }
 
   .project-body {

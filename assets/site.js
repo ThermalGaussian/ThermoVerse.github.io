@@ -4,8 +4,6 @@ export const works = [
     title: "ThermalGaussian: Thermal 3D Gaussian Splatting",
     status: "Published",
     venue: "Published in ICLR 2025",
-    description:
-      "Placeholder description: a thermal-aware 3D Gaussian Splatting project for paired RGB and thermal scene reconstruction.",
     authors: [
       author("Rongfeng Lu", "1,3,*,\u2020"),
       author("Hangyu Chen", "1,*"),
@@ -31,15 +29,19 @@ export const works = [
         "Pipeline",
         "This figure summarizes the main pipeline and the cross-modal modeling process used in ThermalGaussian.",
         [
-          figure("projects/thermalgaussian/pipeline.png", "ThermalGaussian pipeline", "Pipeline overview"),
+          figure("projects/thermalgaussian/pipeline.png", "ThermalGaussian pipeline", "Pipeline overview", "compact"),
         ],
+      ),
+      textSection(
+        "Abstract",
+        "Thermography is especially valuable for the military and other users of surveillance cameras. Some recent methods based on Neural Radiance Fields (NeRF) are proposed to reconstruct the thermal scenes in 3D from a set of thermal and RGB images. However, unlike NeRF, 3D Gaussian splatting (3DGS) prevails due to its rapid training and real-time rendering. In this work, we propose ThermalGaussian, the first thermal 3DGS approach capable of rendering high-quality images in RGB and thermal modalities. We first calibrate the RGB camera and the thermal camera to ensure that both modalities are accurately aligned. Subsequently, we use the registered images to learn the multimodal 3D Gaussians. To prevent the overfitting of any single modality, we introduce several multimodal regularization constraints. We also develop smoothing constraints tailored to the physical characteristics of the thermal modality. Besides, we contribute a real-world dataset named RGBT-Scenes, captured by a hand-hold thermal-infrared camera, facilitating future research on thermal scene reconstruction. We conduct comprehensive experiments to show that ThermalGaussian achieves photorealistic rendering of thermal images and improves the rendering quality of RGB images. With the proposed multimodal regularization constraints, we also reduced the model's storage cost by 90%. Our project page is at https://thermalgaussian.github.io/.",
       ),
       workSection(
         "Comparisons",
         "We present qualitative thermal image comparisons between our method, previous approaches, and the corresponding ground truth images from test views. We also show the training results of MSX images, which are easier to apply.",
         [
-          figure("projects/thermalgaussian/comparison1.png", "Thermal comparison", "Qualitative thermal and MSX comparison"),
-          figure("projects/thermalgaussian/comparison2.png", "RGB comparison", "Qualitative RGB comparison"),
+          figure("projects/thermalgaussian/comparison1.png", "Thermal comparison", "Qualitative thermal and MSX comparison", "compact"),
+          figure("projects/thermalgaussian/comparison2.png", "RGB comparison", "Qualitative RGB comparison", "compact"),
         ],
       ),
       workSection(
@@ -228,6 +230,10 @@ function workSection(heading, body, figures) {
   return { heading, body, figures };
 }
 
+function textSection(heading, body) {
+  return { heading, body, figures: [] };
+}
+
 function figure(src, alt, caption, size = "full") {
   return { src, alt, caption, size };
 }
@@ -308,18 +314,22 @@ function renderWorks(status, containerId) {
     const header = createElement("header", "project-header");
     const titleBlock = createElement("div", "project-title-block");
     titleBlock.append(createElement("span", "pill", work.venue));
-    titleBlock.append(createElement("h3", null, work.title));
+    const titleRow = createElement("div", "title-row");
+    titleRow.append(createElement("h3", null, work.title));
+    if (work.links?.length) {
+      titleRow.append(renderResourceLinks(work.links));
+    }
+    titleBlock.append(titleRow);
     if (work.authors?.length) {
       titleBlock.append(renderAuthorLine(work.authors));
     }
     if (work.affiliations?.length) {
       titleBlock.append(renderAffiliations(work.affiliations));
     }
-    titleBlock.append(createElement("p", null, work.description));
-    header.append(titleBlock);
-    if (work.links?.length) {
-      header.append(renderResourceLinks(work.links));
+    if (work.description) {
+      titleBlock.append(createElement("p", null, work.description));
     }
+    header.append(titleBlock);
 
     const body = createElement("div", "project-body");
     for (const section of work.sections) {
@@ -336,11 +346,13 @@ function renderWorkSection(section) {
   block.append(createElement("h4", null, section.heading));
   block.append(createElement("p", null, section.body));
 
-  const figureList = createElement("div", "work-figure-list");
-  for (const item of section.figures) {
-    figureList.append(renderWorkFigure(item));
+  if (section.figures.length) {
+    const figureList = createElement("div", "work-figure-list");
+    for (const item of section.figures) {
+      figureList.append(renderWorkFigure(item));
+    }
+    block.append(figureList);
   }
-  block.append(figureList);
 
   return block;
 }
