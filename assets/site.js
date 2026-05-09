@@ -1,11 +1,31 @@
 export const works = [
   {
     id: "thermalgaussian",
-    title: "ThermalGaussian",
+    title: "ThermalGaussian: Thermal 3D Gaussian Splatting",
     status: "Published",
-    venue: "Published at ICLR 2025",
+    venue: "Published in ICLR 2025",
     description:
       "Placeholder description: a thermal-aware 3D Gaussian Splatting project for paired RGB and thermal scene reconstruction.",
+    authors: [
+      author("Rongfeng Lu", "1,3,*,\u2020"),
+      author("Hangyu Chen", "1,*"),
+      author("Zunjie Zhu", "1,3"),
+      author("Yuhang Qin", "1"),
+      author("Ming Lu", "2"),
+      author("Le Zhang", "1"),
+      author("Chenggang Yan", "1"),
+      author("Anke Xue", "1,\u2020"),
+    ],
+    affiliations: [
+      affiliation("1", "Hangzhou Dianzi University"),
+      affiliation("2", "Intel Labs China"),
+      affiliation("3", "Lishui Institute of Hangzhou Dianzi University"),
+    ],
+    links: [
+      resourceLink("Paper", "https://arxiv.org/abs/2409.07200", "plugins/thermalgaussian_paper.png"),
+      resourceLink("Code", "https://github.com/chen-hangyu/Thermal-Gaussian-main", "plugins/github.png"),
+      resourceLink("Dataset", "https://drive.google.com/drive/folders/1A6kdIjDe7kw-iKQkzjHNw0wgk_3V7hcp?usp=sharing", "plugins/google-drive.png"),
+    ],
     sections: [
       workSection(
         "Pipeline",
@@ -26,8 +46,8 @@ export const works = [
         "Multimodal Regularization",
         "To verify the effectiveness of the multimodal regularization term, we compare adaptive regularization with manual adjustment of the thermal constraint coefficient and visualize the Gaussian distributions.",
         [
-          figure("projects/thermalgaussian/dynamic_loss.png", "Multimodal regularization comparison", "(a) MR (gamma) vs. fixed coefficient"),
-          figure("projects/thermalgaussian/Point_all.png", "Gaussian distributions", "(b) Gaussian distributions. Left: 3DGS; Right: Ours (MSMG) + MR"),
+          figure("projects/thermalgaussian/dynamic_loss.png", "Multimodal regularization comparison", "(a) MR (gamma) vs. fixed coefficient", "compact"),
+          figure("projects/thermalgaussian/Point_all.png", "Gaussian distributions", "(b) Gaussian distributions. Left: 3DGS; Right: Ours (MSMG) + MR", "compact"),
         ],
       ),
       workSection(
@@ -208,8 +228,20 @@ function workSection(heading, body, figures) {
   return { heading, body, figures };
 }
 
-function figure(src, alt, caption) {
-  return { src, alt, caption };
+function figure(src, alt, caption, size = "full") {
+  return { src, alt, caption, size };
+}
+
+function author(name, marks) {
+  return { name, marks };
+}
+
+function affiliation(index, name) {
+  return { index, name };
+}
+
+function resourceLink(label, href, icon) {
+  return { label, href, icon };
 }
 
 function scene(name, images, metadata = {}) {
@@ -274,9 +306,20 @@ function renderWorks(status, containerId) {
     article.id = work.id;
 
     const header = createElement("header", "project-header");
-    header.append(createElement("span", "pill", work.venue));
-    header.append(createElement("h3", null, work.title));
-    header.append(createElement("p", null, work.description));
+    const titleBlock = createElement("div", "project-title-block");
+    titleBlock.append(createElement("span", "pill", work.venue));
+    titleBlock.append(createElement("h3", null, work.title));
+    if (work.authors?.length) {
+      titleBlock.append(renderAuthorLine(work.authors));
+    }
+    if (work.affiliations?.length) {
+      titleBlock.append(renderAffiliations(work.affiliations));
+    }
+    titleBlock.append(createElement("p", null, work.description));
+    header.append(titleBlock);
+    if (work.links?.length) {
+      header.append(renderResourceLinks(work.links));
+    }
 
     const body = createElement("div", "project-body");
     for (const section of work.sections) {
@@ -304,6 +347,9 @@ function renderWorkSection(section) {
 
 function renderWorkFigure(item) {
   const figureElement = createElement("figure", "work-figure");
+  if (item.size === "compact") {
+    figureElement.classList.add("is-compact");
+  }
   const image = document.createElement("img");
   image.src = item.src;
   image.alt = item.alt;
@@ -311,6 +357,55 @@ function renderWorkFigure(item) {
   image.decoding = "async";
   figureElement.append(image, createElement("figcaption", null, item.caption));
   return figureElement;
+}
+
+function renderAuthorLine(authors) {
+  const list = createElement("p", "author-line");
+  for (const [index, item] of authors.entries()) {
+    const name = createElement("strong", null, item.name);
+    const marks = document.createElement("sup");
+    marks.textContent = item.marks;
+    list.append(name, marks);
+    if (index < authors.length - 1) {
+      list.append(document.createTextNode("  "));
+    }
+  }
+  return list;
+}
+
+function renderAffiliations(affiliations) {
+  const list = createElement("p", "affiliation-line");
+  for (const [index, item] of affiliations.entries()) {
+    const mark = document.createElement("sup");
+    mark.textContent = item.index;
+    list.append(mark, document.createTextNode(item.name));
+    if (index < affiliations.length - 1) {
+      list.append(document.createTextNode("  "));
+    }
+  }
+  return list;
+}
+
+function renderResourceLinks(links) {
+  const list = createElement("div", "resource-links");
+  for (const item of links) {
+    const link = document.createElement("a");
+    link.className = "resource-link";
+    link.href = item.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.setAttribute("aria-label", `${item.label} for ThermalGaussian`);
+
+    const icon = document.createElement("img");
+    icon.src = item.icon;
+    icon.alt = "";
+    icon.loading = "lazy";
+    icon.decoding = "async";
+
+    link.append(icon, createElement("span", null, item.label));
+    list.append(link);
+  }
+  return list;
 }
 
 function renderDatasets() {

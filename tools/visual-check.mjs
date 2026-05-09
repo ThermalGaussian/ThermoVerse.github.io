@@ -188,6 +188,7 @@ async function inspectViewport(client, pageUrl, viewport, screenshotName) {
           scenes: document.querySelectorAll(".dataset-row").length,
           tables: document.querySelectorAll(".dataset-table").length,
           workFigures: document.querySelectorAll(".work-figure").length,
+          resourceLinks: document.querySelectorAll("#thermalgaussian .resource-link").length,
           images: document.querySelectorAll("main img").length,
           projectImagesLoaded: [...document.querySelectorAll(".work-figure img")].every((image) => image.complete && image.naturalWidth > 0),
           croppedProjectImages: [...document.querySelectorAll(".work-figure img")].filter((image) => {
@@ -282,10 +283,12 @@ try {
   assert(mobileMetrics.tables === 4, "Mobile render must include four dataset tables");
   assert(desktopMetrics.workFigures === 12, "Desktop render must include all work figures");
   assert(mobileMetrics.workFigures === 12, "Mobile render must include all work figures");
+  assert(desktopMetrics.resourceLinks === 3, "Desktop ThermalGaussian header must include three resource links");
+  assert(mobileMetrics.resourceLinks === 3, "Mobile ThermalGaussian header must include three resource links");
   assert(desktopMetrics.croppedProjectImages === 0, "Desktop project images must preserve natural aspect ratios");
   assert(mobileMetrics.croppedProjectImages === 0, "Mobile project images must preserve natural aspect ratios");
-  assert(desktopMetrics.images === 108, "Desktop render must include all main images");
-  assert(mobileMetrics.images === 108, "Mobile render must include all main images");
+  assert(desktopMetrics.images === 111, "Desktop render must include all main images and resource icons");
+  assert(mobileMetrics.images === 111, "Mobile render must include all main images and resource icons");
   assert(!desktopMetrics.overflowX, "Desktop viewport has horizontal overflow");
   assert(!mobileMetrics.overflowX, "Mobile viewport has horizontal overflow");
 

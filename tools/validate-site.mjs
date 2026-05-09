@@ -63,7 +63,10 @@ assert(!css.includes("object-fit: cover"), "Images must not be cropped with obje
 assert(!css.includes("/ cover no-repeat"), "Hero background must not use cover cropping");
 assert(/loading\s*=\s*["']lazy["']/.test(js), "Images must be rendered with lazy loading");
 assert(!js.includes("visual assets"), "Project headers must not show visual asset counts");
-assert(js.includes("Published at ICLR 2025"), "ThermalGaussian venue label is required");
+assert(js.includes("Published in ICLR 2025"), "ThermalGaussian venue label is required");
+assert(js.includes("ThermalGaussian: Thermal 3D Gaussian Splatting"), "ThermalGaussian title must include the full paper title");
+assert(js.includes("Rongfeng Lu"), "ThermalGaussian authors must be listed");
+assert(js.includes("Hangzhou Dianzi University"), "ThermalGaussian affiliations must be listed");
 
 const moduleUrl = `${pathToFileURL(path.join(root, "assets/site.js")).href}?t=${Date.now()}`;
 const { works, datasets } = await import(moduleUrl);
@@ -74,7 +77,7 @@ assert(works.length === 4, "Expected four works");
 assert(datasets.length === 4, "Expected four datasets");
 
 const expectedWorks = new Map([
-  ["ThermalGaussian", "Published"],
+  ["ThermalGaussian: Thermal 3D Gaussian Splatting", "Published"],
   ["ThermalGaussian++", "Published"],
   ["ThermalGaussian-X", "Submitted"],
   ["Dynamic Thermal Gaussians", "Submitted"],
@@ -97,10 +100,27 @@ for (const [title, status] of expectedWorks) {
   }
 }
 
-const thermalGaussian = works.find((item) => item.title === "ThermalGaussian");
+const thermalGaussian = works.find((item) => item.id === "thermalgaussian");
 assert(
-  thermalGaussian.venue === "Published at ICLR 2025",
-  "ThermalGaussian must show Published at ICLR 2025",
+  thermalGaussian.title === "ThermalGaussian: Thermal 3D Gaussian Splatting",
+  "ThermalGaussian must use the full paper title",
+);
+assert(
+  thermalGaussian.venue === "Published in ICLR 2025",
+  "ThermalGaussian must show Published in ICLR 2025",
+);
+assert(Array.isArray(thermalGaussian.authors) && thermalGaussian.authors.length === 8, "ThermalGaussian must list eight authors");
+assert(Array.isArray(thermalGaussian.affiliations) && thermalGaussian.affiliations.length === 3, "ThermalGaussian must list three affiliations");
+assert(Array.isArray(thermalGaussian.links) && thermalGaussian.links.length === 3, "ThermalGaussian must include Paper, Code, and Dataset links");
+for (const link of thermalGaussian.links) {
+  assert(["Paper", "Code", "Dataset"].includes(link.label), `Unexpected ThermalGaussian link: ${link.label}`);
+  assert(link.href.startsWith("https://"), `${link.label} link must be an external HTTPS URL`);
+  await assertExists(link.icon);
+}
+const regularizationSection = thermalGaussian.sections.find((section) => section.heading === "Multimodal Regularization");
+assert(
+  regularizationSection.figures.every((item) => item.size === "compact"),
+  "ThermalGaussian regularization figures should be compact",
 );
 
 const expectedDatasets = new Set([

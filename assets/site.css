@@ -211,6 +211,17 @@ a {
   margin-bottom: 28px;
 }
 
+.project-header {
+  gap: 22px;
+  max-width: none;
+}
+
+.project-title-block {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
 .pill {
   width: fit-content;
   min-height: 28px;
@@ -237,6 +248,65 @@ a {
 .work-section p {
   margin: 0;
   color: var(--muted);
+}
+
+.author-line,
+.affiliation-line {
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.author-line {
+  font-size: clamp(1.05rem, 2vw, 1.45rem);
+  font-weight: 700;
+}
+
+.author-line strong {
+  font-weight: 700;
+}
+
+.author-line sup,
+.affiliation-line sup {
+  font-size: 0.68em;
+  line-height: 0;
+}
+
+.affiliation-line {
+  font-size: clamp(0.98rem, 1.7vw, 1.28rem);
+}
+
+.resource-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(22px, 5vw, 54px);
+  justify-content: center;
+  padding: 4px 0 6px;
+}
+
+.resource-link {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  min-width: 64px;
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 800;
+  transition:
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.resource-link:hover {
+  color: var(--accent-strong);
+  transform: translateY(-2px);
+}
+
+.resource-link img {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
 }
 
 .project-body {
@@ -272,6 +342,11 @@ a {
 .work-figure img {
   width: 100%;
   height: auto;
+}
+
+.work-figure.is-compact {
+  width: min(100%, 760px);
+  justify-self: center;
 }
 
 figcaption {
@@ -433,6 +508,15 @@ figcaption {
   .project-card,
   .dataset-block {
     padding: 18px;
+  }
+
+  .resource-links {
+    gap: 18px;
+  }
+
+  .resource-link img {
+    width: 58px;
+    height: 58px;
   }
 
   .project-body {
