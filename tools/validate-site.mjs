@@ -69,8 +69,13 @@ assert(js.includes("ThermalGaussian: Thermal 3D Gaussian Splatting"), "ThermalGa
 assert(js.includes("Rongfeng Lu"), "ThermalGaussian authors must be listed");
 assert(js.includes("Hangzhou Dianzi University"), "ThermalGaussian affiliations must be listed");
 assert(js.includes("Thermography is especially valuable"), "ThermalGaussian Abstract text is required");
+assert(!js.includes("Paper Thumbnail"), "ThermalGaussian Paper Thumbnail section must be removed");
+assert(js.includes("lu2024thermalgaussian"), "ThermalGaussian Citation section is required");
 assert(css.includes("text-align: left"), "ThermalGaussian authors and affiliations should be left aligned");
 assert(css.includes("title-row"), "ThermalGaussian title and resource links should share a row");
+assert(css.includes("author-item"), "ThermalGaussian authors should render as spaced items");
+assert(css.includes("affiliation-item"), "ThermalGaussian affiliations should render as spaced items");
+assert(css.includes("is-wide"), "ThermalGaussian Pipeline and Comparisons figures should support a wider display size");
 
 const moduleUrl = `${pathToFileURL(path.join(root, "assets/site.js")).href}?t=${Date.now()}`;
 const { works, datasets } = await import(moduleUrl);
@@ -96,7 +101,7 @@ for (const [title, status] of expectedWorks) {
     assert(section.heading, `${title} section headings are required`);
     assert(section.body, `${title} section body copy is required`);
     assert(Array.isArray(section.figures), `${title} sections must expose a figures array`);
-    if (section.heading !== "Abstract") {
+    if (!["Abstract", "Citation"].includes(section.heading)) {
       assert(section.figures.length > 0, `${title} non-abstract sections must include figures`);
     }
     for (const figure of section.figures) {
@@ -130,9 +135,24 @@ assert(
   thermalGaussianHeadings[0] === "Pipeline" && thermalGaussianHeadings[1] === "Abstract",
   "ThermalGaussian Abstract must be directly after Pipeline",
 );
+assert(
+  thermalGaussianHeadings.at(-1) === "Citation",
+  "ThermalGaussian Citation must be the final section",
+);
 const abstractSection = thermalGaussian.sections.find((section) => section.heading === "Abstract");
 assert(!abstractSection.figures?.length, "ThermalGaussian Abstract should be text-only");
-const compactHeadings = new Set(["Pipeline", "Comparisons", "Multimodal Regularization"]);
+const citationSection = thermalGaussian.sections.find((section) => section.heading === "Citation");
+assert(!citationSection.figures?.length, "ThermalGaussian Citation should be text-only");
+assert(citationSection.kind === "citation", "ThermalGaussian Citation should render with citation styling");
+assert(citationSection.body.includes("@article{lu2024thermalgaussian"), "ThermalGaussian Citation must include the BibTeX entry");
+const wideHeadings = new Set(["Pipeline", "Comparisons"]);
+for (const section of thermalGaussian.sections.filter((item) => wideHeadings.has(item.heading))) {
+  assert(
+    section.figures.every((item) => item.size === "wide"),
+    `ThermalGaussian ${section.heading} figures should be wide`,
+  );
+}
+const compactHeadings = new Set(["Multimodal Regularization"]);
 for (const section of thermalGaussian.sections.filter((item) => compactHeadings.has(item.heading))) {
   assert(
     section.figures.every((item) => item.size === "compact"),

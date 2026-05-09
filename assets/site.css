@@ -261,8 +261,24 @@ a {
   color: var(--muted);
 }
 
+.citation-block {
+  margin: 0;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f3f5f2;
+  color: var(--ink);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  padding: 16px;
+  white-space: pre;
+}
+
 .author-line,
 .affiliation-line {
+  display: flex;
+  flex-wrap: wrap;
   color: var(--ink);
   font-family: Georgia, "Times New Roman", serif;
   line-height: 1.35;
@@ -270,8 +286,21 @@ a {
 }
 
 .author-line {
+  column-gap: 14px;
+  row-gap: 4px;
   font-size: clamp(0.9rem, 1.55vw, 1.12rem);
   font-weight: 700;
+}
+
+.affiliation-line {
+  column-gap: 18px;
+  row-gap: 4px;
+}
+
+.author-item,
+.affiliation-item {
+  display: inline-flex;
+  align-items: baseline;
 }
 
 .author-line strong {
@@ -358,6 +387,11 @@ a {
 
 .work-figure.is-compact {
   width: min(100%, 760px);
+  justify-self: center;
+}
+
+.work-figure.is-wide {
+  width: min(100%, 980px);
   justify-self: center;
 }
 

@@ -27,9 +27,9 @@ export const works = [
     sections: [
       workSection(
         "Pipeline",
-        "This figure summarizes the main pipeline and the cross-modal modeling process used in ThermalGaussian.",
+        "We simultaneously construct Gaussians for RGB and thermal modalities using the point cloud obtained from multimodal initialization. Each modality's Gaussians are used to render images in their respective modality. However, the losses from different modalities are combined to jointly constrain the optimization of both sets of Gaussians. Additionally, we establish a multimodal regularization based on the number of Gaussians in each modality, which dynamically adjusts the training coefficients for both modalities.",
         [
-          figure("projects/thermalgaussian/pipeline.png", "ThermalGaussian pipeline", "Pipeline overview", "compact"),
+          figure("projects/thermalgaussian/pipeline.png", "ThermalGaussian pipeline", "ThermalGaussian Overview.", "wide"),
         ],
       ),
       textSection(
@@ -38,26 +38,27 @@ export const works = [
       ),
       workSection(
         "Comparisons",
-        "We present qualitative thermal image comparisons between our method, previous approaches, and the corresponding ground truth images from test views. We also show the training results of MSX images, which are easier to apply.",
+        "We present qualitative thermal image comparisons between our method, previous approaches(3DGS and ThermoNerf), and the corresponding ground truth images from test views. We also present qualitative RGB image comparisons between our method and 3DGS from test views.",
         [
-          figure("projects/thermalgaussian/comparison1.png", "Thermal comparison", "Qualitative thermal and MSX comparison", "compact"),
-          figure("projects/thermalgaussian/comparison2.png", "RGB comparison", "Qualitative RGB comparison", "compact"),
+          figure("projects/thermalgaussian/comparison1.png", "Thermal comparison", "Qualitative Thermal and MSX Comparisons.", "wide"),
+          figure("projects/thermalgaussian/comparison2.png", "RGB comparison", "Qualitative RGB Comparisons.", "wide"),
         ],
       ),
       workSection(
         "Multimodal Regularization",
         "To verify the effectiveness of the multimodal regularization term, we compare adaptive regularization with manual adjustment of the thermal constraint coefficient and visualize the Gaussian distributions.",
         [
-          figure("projects/thermalgaussian/dynamic_loss.png", "Multimodal regularization comparison", "(a) MR (gamma) vs. fixed coefficient", "compact"),
+          figure("projects/thermalgaussian/dynamic_loss.png", "Multimodal regularization comparison", "(a) MR (γ) vs. fixed coefficient", "compact"),
           figure("projects/thermalgaussian/Point_all.png", "Gaussian distributions", "(b) Gaussian distributions. Left: 3DGS; Right: Ours (MSMG) + MR", "compact"),
         ],
       ),
-      workSection(
-        "Paper Thumbnail",
-        "This thumbnail is kept as a compact visual reference for the published work.",
-        [
-          figure("projects/thermalgaussian/paper.png", "ThermalGaussian paper thumbnail", "Paper thumbnail"),
-        ],
+      citationSection(
+        `@article{lu2024thermalgaussian,
+  title     = {ThermalGaussian: Thermal 3D Gaussian Splatting},
+  author    = {Lu, Rongfeng and Chen, Hangyu and Zhu, Zunjie and Qin, Yuhang and Lu, Ming and Zhang, Le and Yan, Chenggang and Xue, Anke},
+  journal   = {arXiv preprint arXiv:2409.07200},
+  year      = {2024},
+}`,
       ),
     ],
   },
@@ -234,6 +235,10 @@ function textSection(heading, body) {
   return { heading, body, figures: [] };
 }
 
+function citationSection(body) {
+  return { heading: "Citation", body, figures: [], kind: "citation" };
+}
+
 function figure(src, alt, caption, size = "full") {
   return { src, alt, caption, size };
 }
@@ -344,7 +349,11 @@ function renderWorks(status, containerId) {
 function renderWorkSection(section) {
   const block = createElement("section", "work-section");
   block.append(createElement("h4", null, section.heading));
-  block.append(createElement("p", null, section.body));
+  if (section.kind === "citation") {
+    block.append(createElement("pre", "citation-block", section.body));
+  } else {
+    block.append(createElement("p", null, section.body));
+  }
 
   if (section.figures.length) {
     const figureList = createElement("div", "work-figure-list");
@@ -362,6 +371,9 @@ function renderWorkFigure(item) {
   if (item.size === "compact") {
     figureElement.classList.add("is-compact");
   }
+  if (item.size === "wide") {
+    figureElement.classList.add("is-wide");
+  }
   const image = document.createElement("img");
   image.src = item.src;
   image.alt = item.alt;
@@ -373,27 +385,25 @@ function renderWorkFigure(item) {
 
 function renderAuthorLine(authors) {
   const list = createElement("p", "author-line");
-  for (const [index, item] of authors.entries()) {
+  for (const item of authors) {
+    const authorItem = createElement("span", "author-item");
     const name = createElement("strong", null, item.name);
     const marks = document.createElement("sup");
     marks.textContent = item.marks;
-    list.append(name, marks);
-    if (index < authors.length - 1) {
-      list.append(document.createTextNode("  "));
-    }
+    authorItem.append(name, marks);
+    list.append(authorItem);
   }
   return list;
 }
 
 function renderAffiliations(affiliations) {
   const list = createElement("p", "affiliation-line");
-  for (const [index, item] of affiliations.entries()) {
+  for (const item of affiliations) {
+    const affiliationItem = createElement("span", "affiliation-item");
     const mark = document.createElement("sup");
     mark.textContent = item.index;
-    list.append(mark, document.createTextNode(item.name));
-    if (index < affiliations.length - 1) {
-      list.append(document.createTextNode("  "));
-    }
+    affiliationItem.append(mark, document.createTextNode(item.name));
+    list.append(affiliationItem);
   }
   return list;
 }
