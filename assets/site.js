@@ -154,6 +154,13 @@ export const works = [
     //   resourceLink("Dataset", "https://drive.google.com/drive/folders/1A6kdIjDe7kw-iKQkzjHNw0wgk_3V7hcp?usp=sharing", "plugins/google-drive.png"),
     // ],
     sections: [
+      workSection(
+        "Pipeline",
+        "We construct RGB and thermal Gaussians from the multimodal-initialized point cloud. Thermal camera poses are learned by taking the RGB poses as initialization. Dynamic Coordinate Re-anchoring (DCR) enables stable global pose learning of large viewpoint variations, such as full 360° viewing ranges. An iterative pose regularization further enforces global consistency among the relative poses. After pose refinement, each modality renders from its corrected viewpoints to compute its own reconstruction loss. A multimodal regularization further balances the training contributions of both modalities.",
+        [
+          figure("projects/thermalgaussian-X/pipeline.png", "ThermalGaussian-X pipeline", "ThermalGaussian-X Overview.", "wide"),
+        ],
+      ),
       textSection(
         "Abstract",
         "Multimodal image alignment is an essential step for vision tasks that rely on multiple modalities. Most existing methods use deep networks to warp one image to match another. Although effective, such warping is not 3D-aware and often alters the image structure, causing distortion. To address this problem, we propose ThermalGaussian-X, a 3D-aware method that aligns multimodal images via 3D Gaussian Splatting (3DGS). Our model constructs a shared 3DGS model from unaligned multiview RGB and thermal images, automatically learning the relative camera poses between modalities. Specifically, we treat the relative poses as learnable parameters, which are optimized during 3DGS training. We design a dynamic coordinate re-anchoring to localize the coordinate systems, resulting in a stable gradient. We also design an iterative pose regularization to ensure the global consistency of relative camera poses across all viewpoints. Finally, we introduce a multi-task regularization term to improve training stability. Experiments demonstrate that our method achieves state-of-the-art results in both unaligned multimodal reconstruction and multimodal alignment. The code will be released.",
@@ -259,16 +266,46 @@ export const datasets = [
       "Additional RGB-thermal scenes are displayed with RGB, thermal, and MSX examples.",
     caption: "Each scene in the RGBT-Scenes++ dataset is displayed",
     scenes: [
-      folderScene("Applicances", "datasets/RGBT-Scenes++/applicances"),
-      folderScene("Human", "datasets/RGBT-Scenes++/human"),
-      folderScene("Refreshments", "datasets/RGBT-Scenes++/refreshments"),
-      folderScene("Switch", "datasets/RGBT-Scenes++/switch"),
-      folderScene("Plastic", "datasets/RGBT-Scenes++/plastic"),
-      folderScene("Glass", "datasets/RGBT-Scenes++/glass"),
-      folderScene("Chair", "datasets/RGBT-Scenes++/chair"),
-      folderScene("Laptop", "datasets/RGBT-Scenes++/laptop"),
-      folderScene("PV Panel 1", "datasets/RGBT-Scenes++/pv_panel1"),
-      folderScene("PV Panel 2", "datasets/RGBT-Scenes++/pv_panel2"),
+      folderScene("Appliances", "datasets/RGBT-Scenes++/applicances", {
+        views: "134(train) 20(test)",
+        temperature: "14.8°C - 130.2°C",
+      }),
+      folderScene("Human", "datasets/RGBT-Scenes++/human", {
+        views: "87(train) 13(test)",
+        temperature: "5.0°C - 30.0°C",
+      }),
+      folderScene("Refreshments", "datasets/RGBT-Scenes++/refreshments", {
+        views: "160(train) 23(test)",
+        temperature: "-4.0°C - 53.5°C",
+      }),
+      folderScene("Switch", "datasets/RGBT-Scenes++/switch", {
+        views: "44(train) 6(test)",
+        temperature: "18.5°C - 30.5°C",
+      }),
+      folderScene("Plastic", "datasets/RGBT-Scenes++/plastic", {
+        views: "104(train) 15(test)",
+        temperature: "16.0°C - 48.0°C",
+      }),
+      folderScene("Glass", "datasets/RGBT-Scenes++/glass", {
+        views: "189(train) 27(test)",
+        temperature: "18.0°C - 60.0°C",
+      }),
+      folderScene("Chair", "datasets/RGBT-Scenes++/chair", {
+        views: "106(train) 16(test)",
+        temperature: "-10.0°C - 24.0°C",
+      }),
+      folderScene("Laptop", "datasets/RGBT-Scenes++/laptop", {
+        views: "89(train) 13(test)",
+        temperature: "18.0°C - 63.1°C",
+      }),
+      folderScene("PV Panel1", "datasets/RGBT-Scenes++/pv_panel1", {
+        views: "198(train) 29(test)",
+        temperature: "22.0°C - 44.0°C",
+      }),
+      folderScene("PV Panel2", "datasets/RGBT-Scenes++/pv_panel2", {
+        views: "315(train) 45(test)",
+        temperature: "22.0°C - 51.0°C",
+      }),
     ],
   },
   {
@@ -368,12 +405,12 @@ function rgbtPath(name) {
   };
 }
 
-function folderScene(name, basePath) {
+function folderScene(name, basePath, metadata = {}) {
   return scene(name, {
     RGB: `${basePath}/rgb.jpg`,
     Thermal: `${basePath}/thermal.jpg`,
     MSX: `${basePath}/msx.jpg`,
-  });
+  }, metadata);
 }
 
 function prefixedScene(name, basePath, metadata = {}) {
@@ -682,32 +719,41 @@ function setupActiveNavigation() {
     })
     .filter(Boolean);
 
-  if (!("IntersectionObserver" in window)) {
+  if (!sections.length) {
     return;
   }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (!visible) {
-        return;
-      }
-      const id = `#${visible.target.id}`;
-      for (const link of navLinks) {
-        link.classList.toggle("is-active", link.hash === id);
-      }
-    },
-    {
-      rootMargin: "-20% 0px -62% 0px",
-      threshold: [0.08, 0.18, 0.32],
-    },
-  );
+  let ticking = false;
 
-  for (const { target } of sections) {
-    observer.observe(target);
-  }
+  const updateActiveLink = () => {
+    ticking = false;
+    const anchorLine = Math.max(96, window.innerHeight * 0.28);
+    let active = sections[0];
+
+    for (const section of sections) {
+      const rect = section.target.getBoundingClientRect();
+      if (rect.top <= anchorLine) {
+        active = section;
+      } else {
+        break;
+      }
+    }
+
+    for (const link of navLinks) {
+      link.classList.toggle("is-active", link === active.link);
+    }
+  };
+
+  const requestUpdate = () => {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActiveLink);
+    }
+  };
+
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", requestUpdate);
+  updateActiveLink();
 }
 
 function init() {

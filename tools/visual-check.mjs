@@ -89,7 +89,7 @@ async function waitForJson(url, timeoutMs = 10_000) {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(1000) });
       if (response.ok) {
         return response.json();
       }
@@ -109,15 +109,18 @@ class CdpClient {
   }
 
   async open() {
+    let timer;
     await new Promise((resolve, reject) => {
+      timer = setTimeout(() => reject(new Error("Timed out opening CDP websocket")), 10_000);
       this.ws.addEventListener("open", resolve, { once: true });
       this.ws.addEventListener("error", reject, { once: true });
-    });
+    }).finally(() => clearTimeout(timer));
 
     this.ws.addEventListener("message", (event) => {
       const message = JSON.parse(event.data);
       if (message.id && this.pending.has(message.id)) {
-        const { resolve, reject } = this.pending.get(message.id);
+        const { resolve, reject, timer } = this.pending.get(message.id);
+        clearTimeout(timer);
         this.pending.delete(message.id);
         if (message.error) {
           reject(new Error(message.error.message));
@@ -134,23 +137,35 @@ class CdpClient {
     });
   }
 
-  send(method, params = {}) {
+  send(method, params = {}, timeoutMs = 15_000) {
     const id = this.nextId++;
     this.ws.send(JSON.stringify({ id, method, params }));
     return new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject });
+      const timer = setTimeout(() => {
+        this.pending.delete(id);
+        reject(new Error(`Timed out waiting for CDP response: ${method}`));
+      }, timeoutMs);
+      this.pending.set(id, { resolve, reject, timer });
     });
   }
 
-  once(method) {
+  once(method, timeoutMs = 15_000) {
     return new Promise((resolve) => {
       const listener = (params) => {
+        clearTimeout(timer);
         this.events.set(
           method,
           (this.events.get(method) ?? []).filter((item) => item !== listener),
         );
         resolve(params);
       };
+      const timer = setTimeout(() => {
+        this.events.set(
+          method,
+          (this.events.get(method) ?? []).filter((item) => item !== listener),
+        );
+        resolve(null);
+      }, timeoutMs);
       this.events.set(method, [...(this.events.get(method) ?? []), listener]);
     });
   }
@@ -163,6 +178,7 @@ class CdpClient {
 async function createPage(debugPort) {
   const response = await fetch(`http://127.0.0.1:${debugPort}/json/new?about:blank`, {
     method: "PUT",
+    signal: AbortSignal.timeout(3000),
   });
   assert(response.ok, "Unable to create a browser target");
   const target = await response.json();
@@ -188,7 +204,10 @@ async function inspectViewport(client, pageUrl, viewport, screenshotName) {
     awaitPromise: true,
     expression: `Promise.all([...document.images].map((image) => {
       image.loading = "eager";
-      return image.decode().catch(() => null);
+      return Promise.race([
+        image.decode().catch(() => null),
+        new Promise((resolve) => setTimeout(resolve, 5000)),
+      ]);
     }))`,
   });
 
@@ -210,6 +229,8 @@ async function inspectViewport(client, pageUrl, viewport, screenshotName) {
           dynamicHeaders: [...document.querySelectorAll("#dataset-dynamic-rgbt-scenes th")].map((cell) => cell.textContent.trim()),
           dynamicRows: document.querySelectorAll("#dataset-dynamic-rgbt-scenes .dataset-row").length,
           dynamicPairedCells: document.querySelector("#dataset-dynamic-rgbt-scenes .dataset-row")?.children.length ?? 0,
+          dynamicDividerWidth: getComputedStyle(document.querySelector("#dataset-dynamic-rgbt-scenes th:nth-child(6)")).borderLeftWidth,
+          dynamicThumbWidth: Math.round(document.querySelector("#dataset-dynamic-rgbt-scenes .dataset-thumb")?.getBoundingClientRect().width ?? 0),
           abstractLinks: document.querySelectorAll(".abstract-text a[href='https://thermalgaussian.github.io/']").length,
           abstractTextAlign: getComputedStyle(document.querySelector(".abstract-text")).textAlign,
           proseTextJustified: [...document.querySelectorAll(".hero p, .dataset-header p, .work-section p")].every((element) => getComputedStyle(element).textAlign === "justify"),
@@ -318,6 +339,10 @@ try {
   assert(mobileMetrics.dynamicRows === 6, "Mobile DynamicRGBT-Scenes paired table must render six rows");
   assert(desktopMetrics.dynamicPairedCells === 10, "Desktop DynamicRGBT-Scenes rows must contain two scene groups");
   assert(mobileMetrics.dynamicPairedCells === 10, "Mobile DynamicRGBT-Scenes rows must contain two scene groups");
+  assert(desktopMetrics.dynamicDividerWidth === "2px", "Desktop DynamicRGBT-Scenes table must show a divider between paired groups");
+  assert(mobileMetrics.dynamicDividerWidth === "2px", "Mobile DynamicRGBT-Scenes table must show a divider between paired groups");
+  assert(desktopMetrics.dynamicThumbWidth >= 132, "Desktop DynamicRGBT-Scenes thumbnails should be enlarged");
+  assert(mobileMetrics.dynamicThumbWidth >= 132, "Mobile DynamicRGBT-Scenes thumbnails should be enlarged");
   assert(desktopMetrics.abstractLinks === 1, "Desktop render must link the ThermalGaussian project page URL");
   assert(mobileMetrics.abstractLinks === 1, "Mobile render must link the ThermalGaussian project page URL");
   assert(desktopMetrics.abstractTextAlign === "justify", "Desktop Abstract text must be justified");

@@ -79,6 +79,7 @@ assert(css.includes("text-align: justify"), "Abstract text should be justified")
 assert(css.includes("width: fit-content"), "Dataset tables should not be forced to fill the full content width");
 assert(css.includes("is-wide"), "ThermalGaussian Pipeline and Comparisons figures should support a wider display size");
 assert(js.includes("renderTextWithLinks"), "Work section text should support inline links");
+assert(js.includes("requestAnimationFrame(updateActiveLink)"), "Sidebar active navigation should update from scroll position");
 
 const moduleUrl = `${pathToFileURL(path.join(root, "assets/site.js")).href}?t=${Date.now()}`;
 const { works, datasets } = await import(moduleUrl);
@@ -184,6 +185,24 @@ assert(
   "ThermalGaussian regularization figures should be compact",
 );
 
+const thermalGaussianX = works.find((item) => item.id === "thermalgaussian-x");
+assert(
+  thermalGaussianX.sections[0]?.heading === "Pipeline",
+  "ThermalGaussian-X Pipeline section must appear before Abstract",
+);
+const thermalGaussianXPipeline = thermalGaussianX.sections[0];
+assert(
+  thermalGaussianXPipeline.body.includes("Dynamic Coordinate Re-anchoring"),
+  "ThermalGaussian-X Pipeline text must describe Dynamic Coordinate Re-anchoring",
+);
+assert(
+  thermalGaussianXPipeline.figures.length === 1 &&
+    thermalGaussianXPipeline.figures[0].src === "projects/thermalgaussian-X/pipeline.png" &&
+    thermalGaussianXPipeline.figures[0].caption === "ThermalGaussian-X Overview.",
+  "ThermalGaussian-X Pipeline must use the new pipeline figure and caption",
+);
+await assertExists("projects/thermalgaussian-X/pipeline.png");
+
 const expectedDatasets = new Set([
   "RGBT-Scenes",
   "RGBT-Scenes++",
@@ -218,6 +237,26 @@ assert(
   rgbtScenes.scenes.every((item) => item.views && item.temperature),
   "RGBT-Scenes scenes must include Views and Temp. Range metadata",
 );
+
+const rgbtScenesPlusPlus = datasets.find((dataset) => dataset.name === "RGBT-Scenes++");
+const expectedPlusPlusMetadata = new Map([
+  ["Appliances", { views: "134(train) 20(test)", temperature: "14.8°C - 130.2°C" }],
+  ["Human", { views: "87(train) 13(test)", temperature: "5.0°C - 30.0°C" }],
+  ["Refreshments", { views: "160(train) 23(test)", temperature: "-4.0°C - 53.5°C" }],
+  ["Switch", { views: "44(train) 6(test)", temperature: "18.5°C - 30.5°C" }],
+  ["Plastic", { views: "104(train) 15(test)", temperature: "16.0°C - 48.0°C" }],
+  ["Glass", { views: "189(train) 27(test)", temperature: "18.0°C - 60.0°C" }],
+  ["Chair", { views: "106(train) 16(test)", temperature: "-10.0°C - 24.0°C" }],
+  ["Laptop", { views: "89(train) 13(test)", temperature: "18.0°C - 63.1°C" }],
+  ["PV Panel1", { views: "198(train) 29(test)", temperature: "22.0°C - 44.0°C" }],
+  ["PV Panel2", { views: "315(train) 45(test)", temperature: "22.0°C - 51.0°C" }],
+]);
+for (const [sceneName, expected] of expectedPlusPlusMetadata) {
+  const item = rgbtScenesPlusPlus.scenes.find((scene) => scene.name === sceneName);
+  assert(item, `RGBT-Scenes++ is missing ${sceneName}`);
+  assert(item.views === expected.views, `${sceneName} Views metadata is incorrect`);
+  assert(item.temperature === expected.temperature, `${sceneName} Temp. Range metadata is incorrect`);
+}
 
 const rgbtScenesExtend = datasets.find((dataset) => dataset.name === "RGBT-Scenes-extend");
 const expectedExtendMetadata = new Map([
